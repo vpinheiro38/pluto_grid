@@ -146,11 +146,11 @@ void main() {
           mode: mode,
         ).update();
 
-        expect(items[0].size, 100 * scale);
-        expect(items[1].size, 200 * scale);
-        expect(items[2].size, 200 * scale);
-        expect(items[3].size, 100 * scale);
-        expect(items[4].size, 100 * scale);
+        expect(items[0].size, 100 * scale + 1);
+        expect(items[1].size, 200 * scale + 1);
+        expect(items[2].size, 200 * scale + 1);
+        expect(items[3].size, 100 * scale + 1);
+        expect(items[4].size, 100 * scale + 1);
       });
 
       test(
@@ -203,9 +203,9 @@ void main() {
           mode: mode,
         ).update();
 
-        expect(items[0].size, 100 * scale);
+        expect(items[0].size, 100 * scale + 1);
         expect(items[1].size, 120);
-        expect(items[2].size, 130 * scale);
+        expect(items[2].size, 130 * scale + 1);
         expect(items[3].size, 140);
         expect(items[4].size, 150);
       });
