@@ -192,6 +192,8 @@ class PlutoGridConfiguration {
 
 class PlutoGridStyleConfig {
   const PlutoGridStyleConfig({
+    this.columnsBackgroundColor,
+    this.columnRowDividerColor,
     this.enableGridBorderShadow = false,
     this.enableColumnBorderVertical = true,
     this.enableColumnBorderHorizontal = true,
@@ -248,6 +250,8 @@ class PlutoGridStyleConfig {
   });
 
   const PlutoGridStyleConfig.dark({
+    this.columnsBackgroundColor,
+    this.columnRowDividerColor,
     this.enableGridBorderShadow = false,
     this.enableColumnBorderVertical = true,
     this.enableColumnBorderHorizontal = true,
@@ -302,6 +306,10 @@ class PlutoGridStyleConfig {
     this.gridBorderRadius = BorderRadius.zero,
     this.gridPopupBorderRadius = BorderRadius.zero,
   });
+
+  final Color? columnsBackgroundColor;
+
+  final Color? columnRowDividerColor;
 
   /// Enable borderShadow in [PlutoGrid].
   final bool enableGridBorderShadow;
@@ -370,7 +378,7 @@ class PlutoGridStyleConfig {
   final Color menuBackgroundColor;
 
   /// Set the border color of [PlutoGrid].
-  final Color gridBorderColor;
+  final Color? gridBorderColor;
 
   /// Set the border color of the widgets inside [PlutoGrid].
   ///

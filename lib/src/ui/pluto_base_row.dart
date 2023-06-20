@@ -68,6 +68,7 @@ class PlutoBaseRow extends StatelessWidget {
       child: PlutoBaseCell(
         key: row.cells[column.field]!.key,
         cell: row.cells[column.field]!,
+        columns: columns,
         column: column,
         rowIdx: rowIdx,
         row: row,
@@ -84,6 +85,7 @@ class PlutoBaseRow extends StatelessWidget {
       enableRowColorAnimation:
           stateManager.configuration.style.enableRowColorAnimation,
       key: ValueKey('rowContainer_${row.key}'),
+      isLeftFrozen: key.toString().contains('left_frozen_row'),
       child: visibilityLayout
           ? PlutoVisibilityLayout(
               key: ValueKey('rowContainer_${row.key}_row'),
@@ -184,6 +186,8 @@ class _RowContainerWidget extends PlutoStatefulWidget {
 
   final bool enableRowColorAnimation;
 
+  final bool isLeftFrozen;
+
   final Widget child;
 
   const _RowContainerWidget({
@@ -191,6 +195,7 @@ class _RowContainerWidget extends PlutoStatefulWidget {
     required this.rowIdx,
     required this.row,
     required this.enableRowColorAnimation,
+    required this.isLeftFrozen,
     required this.child,
     Key? key,
   }) : super(key: key);
@@ -249,6 +254,47 @@ class _RowContainerWidgetState extends PlutoStateWithChange<_RowContainerWidget>
     );
   }
 
+  Border _getDefaultBorderRow() {
+    if (stateManager.rowBorderCallback == null) {
+      final isDraggingRow = stateManager.isDraggingRow;
+
+      final bool isTopDragTarget =
+          isDraggingRow && stateManager.isRowIdxTopDragTarget(widget.rowIdx);
+
+      final bool isBottomDragTarget =
+          isDraggingRow && stateManager.isRowIdxBottomDragTarget(widget.rowIdx);
+
+      return Border(
+        top: isTopDragTarget
+            ? BorderSide(
+                width: PlutoGridSettings.rowBorderWidth,
+                color: stateManager.configuration.style.activatedBorderColor,
+              )
+            : BorderSide.none,
+        bottom: isBottomDragTarget
+            ? BorderSide(
+                width: PlutoGridSettings.rowBorderWidth,
+                color: stateManager.configuration.style.activatedBorderColor,
+              )
+            : stateManager.configuration.style.enableCellBorderHorizontal
+                ? BorderSide(
+                    width: PlutoGridSettings.rowBorderWidth,
+                    color: stateManager.configuration.style.borderColor,
+                  )
+                : BorderSide.none,
+      );
+    }
+
+    return stateManager.rowBorderCallback!(
+      PlutoRowBorderContext(
+        rowIdx: widget.rowIdx,
+        row: widget.row,
+        stateManager: stateManager,
+        isLeftFrozen: widget.isLeftFrozen,
+      ),
+    );
+  }
+
   Color _getRowColor({
     required bool isDragTarget,
     required bool isFocusedCurrentRow,
@@ -295,12 +341,6 @@ class _RowContainerWidgetState extends PlutoStateWithChange<_RowContainerWidget>
         !alreadyTarget &&
         stateManager.isRowIdxDragTarget(widget.rowIdx);
 
-    final bool isTopDragTarget =
-        isDraggingRow && stateManager.isRowIdxTopDragTarget(widget.rowIdx);
-
-    final bool isBottomDragTarget =
-        isDraggingRow && stateManager.isRowIdxBottomDragTarget(widget.rowIdx);
-
     final bool hasCurrentSelectingPosition =
         stateManager.hasCurrentSelectingPosition;
 
@@ -314,28 +354,7 @@ class _RowContainerWidgetState extends PlutoStateWithChange<_RowContainerWidget>
       isCheckedRow: isCheckedRow,
     );
 
-    return BoxDecoration(
-      color: rowColor,
-      border: Border(
-        top: isTopDragTarget
-            ? BorderSide(
-                width: PlutoGridSettings.rowBorderWidth,
-                color: stateManager.configuration.style.activatedBorderColor,
-              )
-            : BorderSide.none,
-        bottom: isBottomDragTarget
-            ? BorderSide(
-                width: PlutoGridSettings.rowBorderWidth,
-                color: stateManager.configuration.style.activatedBorderColor,
-              )
-            : stateManager.configuration.style.enableCellBorderHorizontal
-                ? BorderSide(
-                    width: PlutoGridSettings.rowBorderWidth,
-                    color: stateManager.configuration.style.borderColor,
-                  )
-                : BorderSide.none,
-      ),
-    );
+    return BoxDecoration(color: rowColor, border: _getDefaultBorderRow());
   }
 
   @override

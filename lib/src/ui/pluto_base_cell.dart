@@ -7,6 +7,7 @@ class PlutoBaseCell extends StatelessWidget
     implements PlutoVisibilityLayoutChild {
   final PlutoCell cell;
 
+  final List<PlutoColumn> columns;
   final PlutoColumn column;
 
   final int rowIdx;
@@ -18,6 +19,7 @@ class PlutoBaseCell extends StatelessWidget
   const PlutoBaseCell({
     Key? key,
     required this.cell,
+    required this.columns,
     required this.column,
     required this.rowIdx,
     required this.row,
@@ -119,6 +121,7 @@ class PlutoBaseCell extends StatelessWidget
         cell: cell,
         rowIdx: rowIdx,
         row: row,
+        columns: columns,
         column: column,
         cellPadding: column.cellPadding ??
             stateManager.configuration.style.defaultCellPadding,
@@ -142,6 +145,8 @@ class _CellContainer extends PlutoStatefulWidget {
 
   final int rowIdx;
 
+  final List<PlutoColumn> columns;
+
   final PlutoColumn column;
 
   final EdgeInsets cellPadding;
@@ -154,6 +159,7 @@ class _CellContainer extends PlutoStatefulWidget {
     required this.cell,
     required this.row,
     required this.rowIdx,
+    required this.columns,
     required this.column,
     required this.cellPadding,
     required this.stateManager,
@@ -276,9 +282,13 @@ class _CellContainerState extends PlutoStateWithChange<_CellContainer> {
         ),
       );
     } else {
+      var hasVerticalBorder = widget.column != widget.columns.last;
+
       return BoxDecoration(
         color: isGroupedRowCell ? cellColorGroupedRow : null,
-        border: enableCellVerticalBorder
+        border: hasVerticalBorder &&
+                (widget.column.enableColumnBorderVertical ??
+                    enableCellVerticalBorder)
             ? BorderDirectional(
                 end: BorderSide(
                   color: borderColor,

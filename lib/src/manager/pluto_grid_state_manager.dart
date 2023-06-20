@@ -79,6 +79,7 @@ class PlutoGridStateChangeNotifier extends PlutoChangeNotifier
     this.onRowsMoved,
     this.onColumnsMoved,
     this.rowColorCallback,
+    this.rowBorderCallback,
     this.createHeader,
     this.createFooter,
     PlutoColumnMenuDelegate? columnMenuDelegate,
@@ -141,6 +142,9 @@ class PlutoGridStateChangeNotifier extends PlutoChangeNotifier
 
   @override
   final PlutoRowColorCallback? rowColorCallback;
+
+  @override
+  final PlutoRowBorderCallback? rowBorderCallback;
 
   @override
   final CreateHeaderCallBack? createHeader;
@@ -223,6 +227,7 @@ class PlutoGridStateManager extends PlutoGridStateChangeNotifier {
     super.onRowsMoved,
     super.onColumnsMoved,
     super.rowColorCallback,
+    super.rowBorderCallback,
     super.createHeader,
     super.createFooter,
     super.columnMenuDelegate,
