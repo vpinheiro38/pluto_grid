@@ -196,7 +196,7 @@ class PlutoAutoSizeScale<T> extends PlutoAutoSize<T> {
 
       final minSize = getItemMinSize(item);
 
-      final size = max(minSize, getItemSize(item) * scale);
+      final size = max(minSize, getItemSize(item) * scale + 1);
 
       setItemSize(item, size);
     }
