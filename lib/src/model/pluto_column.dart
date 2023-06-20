@@ -194,6 +194,13 @@ class PlutoColumn {
   /// Hide the column.
   bool hide;
 
+  Widget? Function(
+    PlutoGridStateManager stateManager,
+    PlutoCell cell,
+    PlutoColumn column,
+    PlutoRow row,
+  )? customCell;
+
   PlutoColumn({
     required this.title,
     required this.field,
@@ -229,6 +236,7 @@ class PlutoColumn {
     this.enableEditingMode = true,
     this.enableColumnBorderVertical = false,
     this.hide = false,
+    this.customCell,
   })  : _key = UniqueKey(),
         _checkReadOnly = checkReadOnly;
 
