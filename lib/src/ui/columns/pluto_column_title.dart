@@ -376,6 +376,11 @@ class _ColumnWidget extends StatelessWidget {
 
         final style = stateManager.style;
 
+        final enableColumnVerticalBorder =
+            column.enableColumnBorderVertical ?? false;
+        final enableVerticalBorder = enableColumnVerticalBorder ||
+            (enableColumnVerticalBorder && style.enableColumnBorderVertical);
+
         return SizedBox(
           width: column.width,
           height: height,
@@ -385,8 +390,7 @@ class _ColumnWidget extends StatelessWidget {
                   ? column.backgroundColor
                   : style.dragTargetColumnColor,
               border: BorderDirectional(
-                end: (column.enableColumnBorderVertical ?? false) ||
-                        style.enableColumnBorderVertical
+                end: enableVerticalBorder
                     ? BorderSide(color: style.borderColor, width: 1.0)
                     : BorderSide.none,
               ),
