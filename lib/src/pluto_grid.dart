@@ -47,7 +47,7 @@ typedef PlutoRowColorCallback = Color Function(
     PlutoRowColorContext rowColorContext);
 
 typedef PlutoRowBorderCallback = Border Function(
-    PlutoRowBorderContext rowColorContext);
+    PlutoRowBorderContext rowBorderContext);
 
 /// [PlutoGrid] is a widget that receives columns and rows and is expressed as a grid-type UI.
 ///
@@ -722,16 +722,16 @@ class PlutoGridState extends PlutoStateWithChange<PlutoGrid> {
                 ],
 
                 /// Column and row divider.
-                // if (showColumnRowDivider)
-                LayoutId(
-                  id: _StackName.columnRowDivider,
-                  child: PlutoShadowLine(
-                    axis: Axis.horizontal,
-                    color: widget.configuration.style.columnRowDividerColor ??
-                        style.gridBorderColor,
-                    shadow: style.enableGridBorderShadow,
+                if (showColumnRowDivider)
+                  LayoutId(
+                    id: _StackName.columnRowDivider,
+                    child: PlutoShadowLine(
+                      axis: Axis.horizontal,
+                      color: widget.configuration.style.columnRowDividerColor ??
+                          style.gridBorderColor,
+                      shadow: style.enableGridBorderShadow,
+                    ),
                   ),
-                ),
 
                 /// Header and divider.
                 if (_stateManager.showHeader) ...[
@@ -830,7 +830,6 @@ class PlutoGridLayoutDelegate extends MultiChildLayoutDelegate {
     double bodyLeftOffset = 0;
     double bodyRightOffset = 0;
 
-    // layout rows
     if (hasChild(_StackName.columnsBackground)) {
       var s = layoutChild(
         _StackName.columnsBackground,
@@ -843,10 +842,6 @@ class PlutoGridLayoutDelegate extends MultiChildLayoutDelegate {
         _StackName.columnsBackground,
         const Offset(0, 0),
       );
-
-      // bodyRowsTopOffset += s.height;
-    } else {
-      // bodyRowsTopOffset += PlutoGridSettings.gridBorderWidth;
     }
 
     // first layout header and footer and see what remains for the scrolling part
@@ -1065,6 +1060,7 @@ class PlutoGridLayoutDelegate extends MultiChildLayoutDelegate {
       );
     }
 
+    // layout rows
     if (hasChild(_StackName.columnRowDivider)) {
       var s = layoutChild(
         _StackName.columnRowDivider,
