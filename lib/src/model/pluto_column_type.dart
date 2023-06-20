@@ -4,6 +4,14 @@ import 'package:intl/intl.dart' as intl;
 abstract class PlutoColumnType {
   dynamic get defaultValue;
 
+  factory PlutoColumnType.custom({
+    dynamic defaultValue = '',
+  }) {
+    return PlutoColumnTypeCustom(
+      defaultValue: defaultValue,
+    );
+  }
+
   /// Set as a string column.
   factory PlutoColumnType.text({
     dynamic defaultValue = '',
@@ -173,6 +181,8 @@ extension PlutoColumnTypeExtension on PlutoColumnType {
   bool get isDate => this is PlutoColumnTypeDate;
 
   bool get isTime => this is PlutoColumnTypeTime;
+
+  bool get isCustom => this is PlutoColumnTypeCustom;
 
   PlutoColumnTypeText get text {
     if (this is! PlutoColumnTypeText) {
@@ -505,6 +515,30 @@ class PlutoColumnTypeTime
   @override
   dynamic makeCompareValue(dynamic v) {
     return v;
+  }
+}
+
+class PlutoColumnTypeCustom implements PlutoColumnType {
+  @override
+  final dynamic defaultValue;
+
+  const PlutoColumnTypeCustom({
+    this.defaultValue,
+  });
+
+  @override
+  bool isValid(dynamic value) {
+    return value is String || value is num;
+  }
+
+  @override
+  int compare(dynamic a, dynamic b) {
+    return _compareWithNull(a, b, () => a.toString().compareTo(b.toString()));
+  }
+
+  @override
+  dynamic makeCompareValue(dynamic v) {
+    return v.toString();
   }
 }
 

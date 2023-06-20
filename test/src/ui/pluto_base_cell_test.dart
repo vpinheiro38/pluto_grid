@@ -205,6 +205,94 @@ void main() {
   });
 
   testWidgets(
+      'WHEN If it is CurrentCell with a custom type without custom cell'
+      'THEN [TextCellWidget] should be rendered', (WidgetTester tester) async {
+    // given
+    final PlutoCell cell = PlutoCell(value: 'cell value');
+
+    final PlutoColumn column = PlutoColumn(
+      title: 'header',
+      field: 'header',
+      type: PlutoColumnType.custom(),
+    );
+
+    final PlutoRow row = PlutoRow(
+      cells: {
+        'header': cell,
+      },
+    );
+
+    const rowIdx = 0;
+
+    // when
+    when(stateManager.isCurrentCell(any)).thenReturn(true);
+    when(stateManager.isEditing).thenReturn(true);
+
+    await tester.pumpWidget(
+      buildApp(
+        cell: cell,
+        column: column,
+        rowIdx: rowIdx,
+        row: row,
+      ),
+    );
+
+    // then
+    expect(find.text('cell value'), findsOneWidget);
+    expect(find.byType(PlutoSelectCell), findsNothing);
+    expect(find.byType(PlutoNumberCell), findsNothing);
+    expect(find.byType(PlutoDateCell), findsNothing);
+    expect(find.byType(PlutoTimeCell), findsNothing);
+    expect(find.byType(PlutoTextCell), findsOneWidget);
+  });
+
+  testWidgets(
+      'WHEN If it is CurrentCell with custom type and custom cell'
+      'THEN custom widget should be rendered', (WidgetTester tester) async {
+    // given
+    final PlutoCell cell = PlutoCell(value: 'cell value');
+
+    final PlutoColumn column = PlutoColumn(
+      title: 'header',
+      field: 'header',
+      type: PlutoColumnType.custom(),
+      customCell: (stateManager, cell, column, row) {
+        return const CircularProgressIndicator();
+      },
+    );
+
+    final PlutoRow row = PlutoRow(
+      cells: {
+        'header': cell,
+      },
+    );
+
+    const rowIdx = 0;
+
+    // when
+    when(stateManager.isCurrentCell(any)).thenReturn(true);
+    when(stateManager.isEditing).thenReturn(true);
+
+    await tester.pumpWidget(
+      buildApp(
+        cell: cell,
+        column: column,
+        rowIdx: rowIdx,
+        row: row,
+      ),
+    );
+
+    // then
+    expect(find.text('cell value'), findsNothing);
+    expect(find.byType(PlutoSelectCell), findsNothing);
+    expect(find.byType(PlutoNumberCell), findsNothing);
+    expect(find.byType(PlutoDateCell), findsNothing);
+    expect(find.byType(PlutoTimeCell), findsNothing);
+    expect(find.byType(PlutoTextCell), findsNothing);
+    expect(find.byType(CircularProgressIndicator), findsOneWidget);
+  });
+
+  testWidgets(
       'WHEN If it is CurrentCell and in Editing state'
       'THEN [TimeCellWidget] should be rendered', (WidgetTester tester) async {
     // given

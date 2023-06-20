@@ -1,6 +1,9 @@
 name: Coverage
 
 on:
+  pull_request:
+    types: [opened, synchronize, reopened]
+    paths: ['**/*.dart', '**/*.yml', '**/*.yaml', '**/*.gradle', '**/*.java']
   push:
     branches:
       - 'master'
@@ -21,7 +24,3 @@ jobs:
       - run: flutter --version
       - run: flutter pub get
       - run: flutter test --coverage
-      # codecov.io
-      - uses: codecov/codecov-action@v3
-        with:
-          file: ./coverage/lcov.info
