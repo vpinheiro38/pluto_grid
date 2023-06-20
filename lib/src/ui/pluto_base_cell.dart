@@ -392,6 +392,19 @@ class _CellState extends PlutoStateWithChange<_Cell> {
           column: widget.column,
           row: widget.row,
         );
+      } else if (widget.column.type.isCustom) {
+        return widget.column.customCell?.call(
+              stateManager,
+              widget.cell,
+              widget.column,
+              widget.row,
+            ) ??
+            PlutoTextCell(
+              stateManager: stateManager,
+              cell: widget.cell,
+              column: widget.column,
+              row: widget.row,
+            );
       }
     }
 
