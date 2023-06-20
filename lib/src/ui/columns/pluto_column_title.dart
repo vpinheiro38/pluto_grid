@@ -385,7 +385,7 @@ class _ColumnWidget extends StatelessWidget {
                   ? column.backgroundColor
                   : style.dragTargetColumnColor,
               border: BorderDirectional(
-                end: column.enableColumnBorderVertical ??
+                end: (column.enableColumnBorderVertical ?? false) ||
                         style.enableColumnBorderVertical
                     ? BorderSide(color: style.borderColor, width: 1.0)
                     : BorderSide.none,

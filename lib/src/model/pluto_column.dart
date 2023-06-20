@@ -227,7 +227,7 @@ class PlutoColumn {
     this.enableSetColumnsMenuItem = true,
     this.enableAutoEditing = false,
     this.enableEditingMode = true,
-    this.enableColumnBorderVertical = true,
+    this.enableColumnBorderVertical = false,
     this.hide = false,
   })  : _key = UniqueKey(),
         _checkReadOnly = checkReadOnly;

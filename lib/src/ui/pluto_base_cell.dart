@@ -287,7 +287,7 @@ class _CellContainerState extends PlutoStateWithChange<_CellContainer> {
       return BoxDecoration(
         color: isGroupedRowCell ? cellColorGroupedRow : null,
         border: hasVerticalBorder &&
-                (widget.column.enableColumnBorderVertical ??
+                ((widget.column.enableColumnBorderVertical ?? false) ||
                     enableCellVerticalBorder)
             ? BorderDirectional(
                 end: BorderSide(
