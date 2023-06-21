@@ -49,6 +49,7 @@ void main() {
     bool isSelectedRow = false,
     bool isCurrentCell = false,
     bool isSelectedCell = false,
+    PlutoRowBorderCallback? rowBorderCallback,
   }) {
     return PlutoWidgetTestHelper(
       'build row widget.',
@@ -64,6 +65,10 @@ void main() {
         when(stateManager.isCurrentCell(any)).thenReturn(isCurrentCell);
         when(stateManager.isSelectedCell(any, any, any))
             .thenReturn(isSelectedCell);
+        if (rowBorderCallback != null) {
+          when(stateManager.rowBorderCallback)
+              .thenAnswer((_) => rowBorderCallback);
+        }
 
         // given
         columns = ColumnHelper.textColumn('header', count: 3);
@@ -174,6 +179,33 @@ void main() {
       expect(
         rowContainerDecoration.border!.bottom.width,
         PlutoGridSettings.rowBorderWidth,
+      );
+    },
+  );
+
+  buildRowWidget(
+    rowBorderCallback: (_) => Border.all(color: Colors.red),
+  ).test(
+    'rowBorderCallback defined',
+    (tester) async {
+      final rowContainerWidget = find
+          .byType(DecoratedBox)
+          .first
+          .evaluate()
+          .first
+          .widget as DecoratedBox;
+
+      final rowContainerDecoration =
+          rowContainerWidget.decoration as BoxDecoration;
+
+      expect(
+        rowContainerDecoration.border!.top.color,
+        Colors.red,
+      );
+
+      expect(
+        rowContainerDecoration.border!.bottom.color,
+        Colors.red,
       );
     },
   );

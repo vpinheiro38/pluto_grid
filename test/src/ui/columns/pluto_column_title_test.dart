@@ -740,4 +740,91 @@ void main() {
       },
     );
   });
+
+  group('individual enableColumnBorderVertical', () {
+    aColumnWithConfiguration(
+      PlutoGridConfiguration configuration, {
+      bool? enableColumnBorderVertical,
+    }) {
+      return PlutoWidgetTestHelper('a column.', (tester) async {
+        when(stateManager.configuration).thenReturn(configuration);
+        when(stateManager.style).thenReturn(configuration.style);
+
+        await tester.pumpWidget(
+          buildApp(
+            column: PlutoColumn(
+              title: 'column title',
+              field: 'column_field_name',
+              type: PlutoColumnType.text(),
+              frozen: PlutoColumnFrozen.end,
+              enableColumnBorderVertical: enableColumnBorderVertical,
+            ),
+          ),
+        );
+      });
+    }
+
+    aColumnWithConfiguration(
+      const PlutoGridConfiguration(
+        style: PlutoGridStyleConfig(
+          enableColumnBorderVertical: true,
+          borderColor: Colors.deepOrange,
+        ),
+      ),
+      enableColumnBorderVertical: true,
+    ).test(
+      'if column enableColumnBorderVertical is true, should be set the border.',
+      (tester) async {
+        expect(
+          stateManager.configuration.style.enableColumnBorderVertical,
+          true,
+        );
+
+        final target = find.descendant(
+          of: find.byKey(sortableGestureKey),
+          matching: find.byType(DecoratedBox),
+        );
+
+        final container = target.evaluate().single.widget as DecoratedBox;
+
+        final BoxDecoration decoration = container.decoration as BoxDecoration;
+
+        final BorderDirectional border = decoration.border as BorderDirectional;
+
+        expect(border.end.width, 1.0);
+        expect(border.end.color, Colors.deepOrange);
+      },
+    );
+
+    aColumnWithConfiguration(
+      const PlutoGridConfiguration(
+        style: PlutoGridStyleConfig(
+          enableColumnBorderVertical: true,
+          borderColor: Colors.deepOrange,
+        ),
+      ),
+      enableColumnBorderVertical: false,
+    ).test(
+      'if column enableColumnBorderVertical is false, should not be set the border.',
+      (tester) async {
+        expect(
+          stateManager.configuration.style.enableColumnBorderVertical,
+          true,
+        );
+
+        final target = find.descendant(
+          of: find.byKey(sortableGestureKey),
+          matching: find.byType(DecoratedBox),
+        );
+
+        final container = target.evaluate().single.widget as DecoratedBox;
+
+        final BoxDecoration decoration = container.decoration as BoxDecoration;
+
+        final BorderDirectional border = decoration.border as BorderDirectional;
+
+        expect(border.end, BorderSide.none);
+      },
+    );
+  });
 }
