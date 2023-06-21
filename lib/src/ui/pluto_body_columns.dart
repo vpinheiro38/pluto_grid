@@ -204,10 +204,6 @@ class MainColumnLayoutDelegate extends MultiChildLayoutDelegate {
       for (PlutoColumn col in items) {
         var width = col.width;
 
-        if (col == items.last) {
-          width = dx + width >= size.width ? width : size.width - dx;
-        }
-
         if (hasChild(col.field)) {
           var boxConstraints = BoxConstraints.tight(
             Size(width, totalColumnsHeight),
