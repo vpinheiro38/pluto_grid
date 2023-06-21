@@ -173,7 +173,7 @@ class PlutoColumnTitleState extends PlutoStateWithChange<PlutoColumnTitle> {
         if (showContextIcon)
           Positioned.directional(
             textDirection: stateManager.textDirection,
-            end: -3,
+            end: 5,
             child: enableGesture
                 ? Listener(
                     onPointerDown: _handleOnPointDown,
@@ -281,7 +281,8 @@ class _DraggableWidget extends StatelessWidget {
             height: stateManager.columnHeight,
             backgroundColor:
                 stateManager.configuration.style.gridBackgroundColor,
-            borderColor: stateManager.configuration.style.gridBorderColor,
+            borderColor:
+                stateManager.configuration.style.gridBorderColor ?? Colors.red,
             child: Text(
               column.title,
               style: stateManager.configuration.style.columnTextStyle.copyWith(
@@ -384,7 +385,8 @@ class _ColumnWidget extends StatelessWidget {
                   ? column.backgroundColor
                   : style.dragTargetColumnColor,
               border: BorderDirectional(
-                end: style.enableColumnBorderVertical
+                end: column.enableColumnBorderVertical ??
+                        style.enableColumnBorderVertical
                     ? BorderSide(color: style.borderColor, width: 1.0)
                     : BorderSide.none,
               ),

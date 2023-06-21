@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:intl/date_symbol_data_local.dart';
 import 'package:intl/intl.dart' show Intl;
 import 'package:pluto_grid/pluto_grid.dart';
+import 'package:pluto_grid/src/widgets/pluto_container.dart';
 
 import 'helper/platform_helper.dart';
 import 'ui/ui.dart';
@@ -45,6 +46,9 @@ typedef CreateFooterCallBack = Widget Function(
 typedef PlutoRowColorCallback = Color Function(
     PlutoRowColorContext rowColorContext);
 
+typedef PlutoRowBorderCallback = Border Function(
+    PlutoRowBorderContext rowBorderContext);
+
 /// [PlutoGrid] is a widget that receives columns and rows and is expressed as a grid-type UI.
 ///
 /// [PlutoGrid] supports movement and editing with the keyboard,
@@ -72,6 +76,7 @@ class PlutoGrid extends PlutoStatefulWidget {
     this.createFooter,
     this.noRowsWidget,
     this.rowColorCallback,
+    this.rowBorderCallback,
     this.columnMenuDelegate,
     this.configuration = const PlutoGridConfiguration(),
     this.notifierFilterResolver,
@@ -290,6 +295,8 @@ class PlutoGrid extends PlutoStatefulWidget {
   /// ```
   /// {@endtemplate}
   final PlutoRowColorCallback? rowColorCallback;
+
+  final PlutoRowBorderCallback? rowBorderCallback;
 
   /// {@template pluto_grid_property_columnMenuDelegate}
   /// Column menu can be customized.
@@ -515,6 +522,7 @@ class PlutoGridState extends PlutoStateWithChange<PlutoGrid> {
       onRowsMoved: widget.onRowsMoved,
       onColumnsMoved: widget.onColumnsMoved,
       rowColorCallback: widget.rowColorCallback,
+      rowBorderCallback: widget.rowBorderCallback,
       createHeader: widget.createHeader,
       createFooter: widget.createFooter,
       columnMenuDelegate: widget.columnMenuDelegate,
@@ -635,6 +643,15 @@ class PlutoGridState extends PlutoStateWithChange<PlutoGrid> {
                 Directionality.of(context),
               ),
               children: [
+                LayoutId(
+                  id: _StackName.columnsBackground,
+                  child: PlutoContainer(
+                    height: widget.configuration.style.columnHeight,
+                    color: widget.configuration.style.columnsBackgroundColor ??
+                        style.gridBackgroundColor,
+                  ),
+                ),
+
                 /// Body columns and rows.
                 LayoutId(
                   id: _StackName.bodyRows,
@@ -661,14 +678,15 @@ class PlutoGridState extends PlutoStateWithChange<PlutoGrid> {
                   LayoutId(
                       id: _StackName.leftFrozenRows,
                       child: PlutoLeftFrozenRows(_stateManager)),
-                  LayoutId(
-                    id: _StackName.leftFrozenDivider,
-                    child: PlutoShadowLine(
-                      axis: Axis.vertical,
-                      color: style.gridBorderColor,
-                      shadow: style.enableGridBorderShadow,
+                  if (style.gridBorderColor != null)
+                    LayoutId(
+                      id: _StackName.leftFrozenDivider,
+                      child: PlutoShadowLine(
+                        axis: Axis.vertical,
+                        color: style.gridBorderColor,
+                        shadow: style.enableGridBorderShadow,
+                      ),
                     ),
-                  ),
                   if (showColumnFooter)
                     LayoutId(
                       id: _StackName.leftFrozenColumnFooters,
@@ -687,12 +705,14 @@ class PlutoGridState extends PlutoStateWithChange<PlutoGrid> {
                       child: PlutoRightFrozenRows(_stateManager)),
                   LayoutId(
                     id: _StackName.rightFrozenDivider,
-                    child: PlutoShadowLine(
-                      axis: Axis.vertical,
-                      color: style.gridBorderColor,
-                      shadow: style.enableGridBorderShadow,
-                      reverse: true,
-                    ),
+                    child: style.gridBorderColor != null
+                        ? PlutoShadowLine(
+                            axis: Axis.vertical,
+                            color: style.gridBorderColor,
+                            shadow: style.enableGridBorderShadow,
+                            reverse: true,
+                          )
+                        : Container(),
                   ),
                   if (showColumnFooter)
                     LayoutId(
@@ -707,7 +727,8 @@ class PlutoGridState extends PlutoStateWithChange<PlutoGrid> {
                     id: _StackName.columnRowDivider,
                     child: PlutoShadowLine(
                       axis: Axis.horizontal,
-                      color: style.gridBorderColor,
+                      color: widget.configuration.style.columnRowDividerColor ??
+                          style.gridBorderColor,
                       shadow: style.enableGridBorderShadow,
                     ),
                   ),
@@ -716,11 +737,13 @@ class PlutoGridState extends PlutoStateWithChange<PlutoGrid> {
                 if (_stateManager.showHeader) ...[
                   LayoutId(
                     id: _StackName.headerDivider,
-                    child: PlutoShadowLine(
-                      axis: Axis.horizontal,
-                      color: style.gridBorderColor,
-                      shadow: style.enableGridBorderShadow,
-                    ),
+                    child: style.gridBorderColor != null
+                        ? PlutoShadowLine(
+                            axis: Axis.horizontal,
+                            color: style.gridBorderColor,
+                            shadow: style.enableGridBorderShadow,
+                          )
+                        : Container(),
                   ),
                   LayoutId(
                     id: _StackName.header,
@@ -806,6 +829,20 @@ class PlutoGridLayoutDelegate extends MultiChildLayoutDelegate {
     double columnsTopOffset = 0;
     double bodyLeftOffset = 0;
     double bodyRightOffset = 0;
+
+    if (hasChild(_StackName.columnsBackground)) {
+      var s = layoutChild(
+        _StackName.columnsBackground,
+        BoxConstraints.tight(
+          Size(size.width, _stateManager.columnHeight),
+        ),
+      );
+
+      positionChild(
+        _StackName.columnsBackground,
+        const Offset(0, 0),
+      );
+    }
 
     // first layout header and footer and see what remains for the scrolling part
     if (hasChild(_StackName.header)) {
@@ -1224,10 +1261,12 @@ class _GridContainer extends StatelessWidget {
           decoration: BoxDecoration(
             color: style.gridBackgroundColor,
             borderRadius: style.gridBorderRadius,
-            border: Border.all(
-              color: style.gridBorderColor,
-              width: PlutoGridSettings.gridBorderWidth,
-            ),
+            border: style.gridBorderColor != null
+                ? Border.all(
+                    color: style.gridBorderColor ?? Colors.black,
+                    width: PlutoGridSettings.gridBorderWidth,
+                  )
+                : null,
           ),
           child: Padding(
             padding: const EdgeInsets.all(PlutoGridSettings.gridPadding),
@@ -1471,6 +1510,23 @@ class PlutoRowColorContext {
   });
 }
 
+class PlutoRowBorderContext {
+  final PlutoRow row;
+
+  final int rowIdx;
+
+  final PlutoGridStateManager stateManager;
+
+  final bool isLeftFrozen;
+
+  const PlutoRowBorderContext({
+    required this.row,
+    required this.rowIdx,
+    required this.stateManager,
+    required this.isLeftFrozen,
+  });
+}
+
 /// Extension class for [ScrollConfiguration.behavior] of [PlutoGrid].
 class PlutoScrollBehavior extends MaterialScrollBehavior {
   const PlutoScrollBehavior({
@@ -1536,7 +1592,7 @@ abstract class PlutoGridSettings {
       PlutoGridSettings.shadowLineSize * 2;
 
   /// Grid - padding
-  static const double gridPadding = 2.0;
+  static const double gridPadding = 0.0;
 
   /// Grid - border width
   static const double gridBorderWidth = 1.0;
@@ -1712,6 +1768,7 @@ enum _StackName {
   rightFrozenColumnFooters,
   rightFrozenRows,
   rightFrozenDivider,
+  columnsBackground,
   columnRowDivider,
   columnFooterDivider,
   footer,

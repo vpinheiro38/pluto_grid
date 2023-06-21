@@ -41,6 +41,8 @@ abstract class IRowState {
 
   PlutoRowColorCallback? get rowColorCallback;
 
+  PlutoRowBorderCallback? get rowBorderCallback;
+
   int? getRowIdxByOffset(double offset);
 
   PlutoRow? getRowByIdx(int rowIdx);

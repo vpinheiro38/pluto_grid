@@ -60,6 +60,14 @@ void main() {
       home: Material(
         child: PlutoBaseCell(
           cell: cell,
+          columns: [
+            column,
+            PlutoColumn(
+              title: '',
+              field: 'field',
+              type: PlutoColumnType.text(),
+            ),
+          ],
           column: column,
           rowIdx: rowIdx,
           row: row,

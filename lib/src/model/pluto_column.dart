@@ -189,6 +189,8 @@ class PlutoColumn {
   /// Entering the Enter key or tapping the cell enters the Editing mode.
   bool? enableEditingMode;
 
+  bool? enableColumnBorderVertical;
+
   /// Hide the column.
   bool hide;
 
@@ -232,6 +234,7 @@ class PlutoColumn {
     this.enableSetColumnsMenuItem = true,
     this.enableAutoEditing = false,
     this.enableEditingMode = true,
+    this.enableColumnBorderVertical,
     this.hide = false,
     this.customCell,
   })  : _key = UniqueKey(),
