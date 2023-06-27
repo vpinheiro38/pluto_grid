@@ -352,4 +352,58 @@ void main() {
       },
     );
   });
+
+  group('colorTextStyleCallback', () {
+    final PlutoColumn column = PlutoColumn(
+      title: 'column title',
+      field: 'column_field_name',
+      type: PlutoColumnType.text(),
+      enableRowDrag: true,
+    );
+
+    final PlutoCell cell = PlutoCell(value: 'default cell value');
+
+    final PlutoRow row = PlutoRow(
+      cells: {
+        'column_field_name': cell,
+      },
+    );
+
+    cellWidget() {
+      return PlutoWidgetTestHelper('cell widget', (tester) async {
+        when(stateManager.cellTextStyleCallback).thenReturn(
+          (_) => const TextStyle(
+            color: Colors.red,
+          ),
+        );
+
+        await tester.pumpWidget(
+          MaterialApp(
+            home: Material(
+              child: PlutoDefaultCell(
+                cell: cell,
+                column: column,
+                row: row,
+                rowIdx: 0,
+                stateManager: stateManager,
+              ),
+            ),
+          ),
+        );
+      });
+    }
+
+    cellWidget().test(
+      'cellTextStyleCallback defined',
+      (tester) async {
+        final cellTextWidget =
+            find.byType(Text).first.evaluate().first.widget as Text;
+
+        expect(
+          cellTextWidget.style?.color,
+          Colors.red,
+        );
+      },
+    );
+  });
 }

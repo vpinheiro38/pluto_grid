@@ -465,12 +465,24 @@ class _DefaultCellWidget extends StatelessWidget {
       ));
     }
 
+    TextStyle defaultTextStyle =
+        stateManager.configuration.style.cellTextStyle.copyWith(
+      decoration: TextDecoration.none,
+      fontWeight: FontWeight.normal,
+    );
+
+    TextStyle cellTextStyle = stateManager.cellTextStyleCallback?.call(
+          PlutoCellTextStyleContext(
+            rowIdx: rowIdx,
+            row: row,
+            stateManager: stateManager,
+          ),
+        ) ??
+        defaultTextStyle;
+
     return Text(
       _text,
-      style: stateManager.configuration.style.cellTextStyle.copyWith(
-        decoration: TextDecoration.none,
-        fontWeight: FontWeight.normal,
-      ),
+      style: cellTextStyle,
       overflow: TextOverflow.ellipsis,
       textAlign: column.textAlign.value,
     );
