@@ -43,6 +43,9 @@ typedef CreateHeaderCallBack = Widget Function(
 typedef CreateFooterCallBack = Widget Function(
     PlutoGridStateManager stateManager);
 
+typedef PlutoCellTextStyleCallback = TextStyle Function(
+    PlutoCellTextStyleContext rowColorContext);
+
 typedef PlutoRowColorCallback = Color Function(
     PlutoRowColorContext rowColorContext);
 
@@ -77,6 +80,7 @@ class PlutoGrid extends PlutoStatefulWidget {
     this.noRowsWidget,
     this.rowColorCallback,
     this.rowBorderCallback,
+    this.cellTextStyleCallback,
     this.columnMenuDelegate,
     this.configuration = const PlutoGridConfiguration(),
     this.notifierFilterResolver,
@@ -297,6 +301,8 @@ class PlutoGrid extends PlutoStatefulWidget {
   final PlutoRowColorCallback? rowColorCallback;
 
   final PlutoRowBorderCallback? rowBorderCallback;
+
+  final PlutoCellTextStyleCallback? cellTextStyleCallback;
 
   /// {@template pluto_grid_property_columnMenuDelegate}
   /// Column menu can be customized.
@@ -523,6 +529,7 @@ class PlutoGridState extends PlutoStateWithChange<PlutoGrid> {
       onColumnsMoved: widget.onColumnsMoved,
       rowColorCallback: widget.rowColorCallback,
       rowBorderCallback: widget.rowBorderCallback,
+      cellTextStyleCallback: widget.cellTextStyleCallback,
       createHeader: widget.createHeader,
       createFooter: widget.createFooter,
       columnMenuDelegate: widget.columnMenuDelegate,
@@ -1524,6 +1531,20 @@ class PlutoRowBorderContext {
     required this.rowIdx,
     required this.stateManager,
     required this.isLeftFrozen,
+  });
+}
+
+class PlutoCellTextStyleContext {
+  final PlutoRow row;
+
+  final int rowIdx;
+
+  final PlutoGridStateManager stateManager;
+
+  const PlutoCellTextStyleContext({
+    required this.row,
+    required this.rowIdx,
+    required this.stateManager,
   });
 }
 
