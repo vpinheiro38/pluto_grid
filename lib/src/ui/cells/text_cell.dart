@@ -54,6 +54,12 @@ mixin TextCellState<T extends TextCell> on State<T> implements TextFieldProps {
 
     cellFocus = FocusNode(onKey: _handleOnKey);
 
+    cellFocus.addListener(() {
+      if (!cellFocus.hasFocus) {
+        _handleOnComplete();
+      }
+    });
+
     widget.stateManager.setTextEditingController(_textController);
 
     _textController.text = formattedValue;
