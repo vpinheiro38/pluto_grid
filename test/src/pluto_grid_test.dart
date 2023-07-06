@@ -1729,4 +1729,109 @@ void main() {
       expect(find.byKey(noRowsWidget.key!), findsNothing);
     });
   });
+
+  testWidgets('should run custom shortcut', (WidgetTester tester) async {
+    final columns = [
+      ColumnHelper.textColumn('headerL', frozen: PlutoColumnFrozen.start).first,
+      ...ColumnHelper.textColumn('headerB', count: 3),
+      ColumnHelper.textColumn('headerR', frozen: PlutoColumnFrozen.end).first,
+    ];
+    final rows = RowHelper.count(10, columns);
+
+    PlutoGridStateManager? stateManager;
+
+    var shortcutEvent = '';
+
+    await tester.pumpWidget(
+      MaterialApp(
+        home: Material(
+          child: PlutoGrid(
+            columns: columns,
+            rows: rows,
+            onLoaded: (PlutoGridOnLoadedEvent event) {
+              stateManager = event.stateManager;
+            },
+            customShortcutEvent: (event) {
+              if (event.isControlPressed &&
+                  event.isKeyPressed(LogicalKeyboardKey.keyZ)) {
+                shortcutEvent = 'UNDO';
+              }
+            },
+          ),
+        ),
+      ),
+    );
+
+    await tester.pumpAndSettle();
+
+    Finder currentCell = find.text('headerB1 value 1');
+
+    await tester.tap(currentCell);
+
+    expect(stateManager!.currentCell!.value, 'headerB1 value 1');
+
+    expect(stateManager!.isEditing, false);
+
+    expect(shortcutEvent, '');
+
+    await tester.sendKeyDownEvent(LogicalKeyboardKey.controlLeft);
+    await tester.sendKeyEvent(LogicalKeyboardKey.keyZ);
+
+    expect(shortcutEvent, 'UNDO');
+  });
+
+  testWidgets(
+    'should not run custom shortcut when is editing cell',
+    (WidgetTester tester) async {
+      final columns = [
+        ColumnHelper.textColumn('headerL', frozen: PlutoColumnFrozen.start)
+            .first,
+        ...ColumnHelper.textColumn('headerB', count: 3),
+        ColumnHelper.textColumn('headerR', frozen: PlutoColumnFrozen.end).first,
+      ];
+      final rows = RowHelper.count(10, columns);
+
+      PlutoGridStateManager? stateManager;
+
+      var shortcutEvent = '';
+
+      await tester.pumpWidget(
+        MaterialApp(
+          home: Material(
+            child: PlutoGrid(
+              columns: columns,
+              rows: rows,
+              onLoaded: (PlutoGridOnLoadedEvent event) {
+                stateManager = event.stateManager;
+              },
+              customShortcutEvent: (event) {
+                if (event.isControlPressed &&
+                    event.isKeyPressed(LogicalKeyboardKey.keyZ)) {
+                  shortcutEvent = 'UNDO';
+                }
+              },
+            ),
+          ),
+        ),
+      );
+
+      await tester.pumpAndSettle();
+
+      final currentCell = find.text('headerB1 value 1');
+
+      await tester.tap(currentCell);
+      await tester.pump();
+      await tester.tap(currentCell);
+      await tester.pump();
+
+      expect(stateManager!.isEditing, true);
+
+      expect(shortcutEvent, '');
+
+      await tester.sendKeyDownEvent(LogicalKeyboardKey.controlLeft);
+      await tester.sendKeyEvent(LogicalKeyboardKey.keyZ);
+
+      expect(shortcutEvent, '');
+    },
+  );
 }

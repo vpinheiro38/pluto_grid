@@ -85,6 +85,7 @@ class PlutoGrid extends PlutoStatefulWidget {
     this.configuration = const PlutoGridConfiguration(),
     this.notifierFilterResolver,
     this.mode = PlutoGridMode.normal,
+    this.customShortcutEvent,
   }) : super(key: key);
 
   /// {@template pluto_grid_property_columns}
@@ -336,6 +337,8 @@ class PlutoGrid extends PlutoStatefulWidget {
   /// [PlutoGridMode.popup]
   /// {@macro pluto_grid_mode_popup}
   final PlutoGridMode mode;
+
+  final void Function(RawKeyEvent)? customShortcutEvent;
 
   /// [setDefaultLocale] sets locale when [Intl] package is used in [PlutoGrid].
   ///
@@ -610,6 +613,8 @@ class PlutoGridState extends PlutoStateWithChange<PlutoGrid> {
 
   KeyEventResult _handleGridFocusOnKey(FocusNode focusNode, RawKeyEvent event) {
     if (_keyManager.eventResult.isSkip == false) {
+      widget.customShortcutEvent?.call(event);
+
       _keyManager.subject.add(PlutoKeyManagerEvent(
         focusNode: focusNode,
         event: event,
