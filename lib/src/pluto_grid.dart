@@ -52,6 +52,12 @@ typedef PlutoRowColorCallback = Color Function(
 typedef PlutoRowBorderCallback = Border Function(
     PlutoRowBorderContext rowBorderContext);
 
+typedef PlutoRowIndicatorCallback = Widget? Function(
+    PlutoRowContext rowContext);
+
+typedef PlutoRowLeftFloatingWidgetCallback = Widget? Function(
+    PlutoRowContext rowContext);
+
 /// [PlutoGrid] is a widget that receives columns and rows and is expressed as a grid-type UI.
 ///
 /// [PlutoGrid] supports movement and editing with the keyboard,
@@ -81,6 +87,8 @@ class PlutoGrid extends PlutoStatefulWidget {
     this.rowColorCallback,
     this.rowBorderCallback,
     this.cellTextStyleCallback,
+    this.rowIndicatorCallback,
+    this.rowLeftFloatingWidgetCallback,
     this.columnMenuDelegate,
     this.configuration = const PlutoGridConfiguration(),
     this.notifierFilterResolver,
@@ -304,6 +312,10 @@ class PlutoGrid extends PlutoStatefulWidget {
   final PlutoRowBorderCallback? rowBorderCallback;
 
   final PlutoCellTextStyleCallback? cellTextStyleCallback;
+
+  final PlutoRowIndicatorCallback? rowIndicatorCallback;
+
+  final PlutoRowLeftFloatingWidgetCallback? rowLeftFloatingWidgetCallback;
 
   /// {@template pluto_grid_property_columnMenuDelegate}
   /// Column menu can be customized.
@@ -533,6 +545,8 @@ class PlutoGridState extends PlutoStateWithChange<PlutoGrid> {
       rowColorCallback: widget.rowColorCallback,
       rowBorderCallback: widget.rowBorderCallback,
       cellTextStyleCallback: widget.cellTextStyleCallback,
+      rowIndicatorCallback: widget.rowIndicatorCallback,
+      rowLeftFloatingWidgetCallback: widget.rowLeftFloatingWidgetCallback,
       createHeader: widget.createHeader,
       createFooter: widget.createFooter,
       columnMenuDelegate: widget.columnMenuDelegate,
@@ -1547,6 +1561,20 @@ class PlutoCellTextStyleContext {
   final PlutoGridStateManager stateManager;
 
   const PlutoCellTextStyleContext({
+    required this.row,
+    required this.rowIdx,
+    required this.stateManager,
+  });
+}
+
+class PlutoRowContext {
+  final PlutoRow row;
+
+  final int rowIdx;
+
+  final PlutoGridStateManager stateManager;
+
+  const PlutoRowContext({
     required this.row,
     required this.rowIdx,
     required this.stateManager,

@@ -45,6 +45,10 @@ abstract class IRowState {
 
   PlutoCellTextStyleCallback? get cellTextStyleCallback;
 
+  PlutoRowIndicatorCallback? get rowIndicatorCallback;
+
+  PlutoRowLeftFloatingWidgetCallback? get rowLeftFloatingWidgetCallback;
+
   int? getRowIdxByOffset(double offset);
 
   PlutoRow? getRowByIdx(int rowIdx);
