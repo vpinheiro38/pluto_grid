@@ -44,13 +44,12 @@ typedef CreateFooterCallBack = Widget Function(
     PlutoGridStateManager stateManager);
 
 typedef PlutoCellTextStyleCallback = TextStyle Function(
-    PlutoCellTextStyleContext rowColorContext);
+    PlutoRowContext rowColorContext);
 
-typedef PlutoRowColorCallback = Color Function(
-    PlutoRowColorContext rowColorContext);
+typedef PlutoRowColorCallback = Color Function(PlutoRowContext rowColorContext);
 
 typedef PlutoRowBorderCallback = Border Function(
-    PlutoRowBorderContext rowBorderContext);
+    PlutoRowContext rowBorderContext);
 
 typedef PlutoRowIndicatorCallback = Widget? Function(
     PlutoRowContext rowContext);
@@ -1522,21 +1521,7 @@ class PlutoGridOnColumnsMovedEvent {
 
 /// Argument of [PlutoGrid.rowColumnCallback] callback
 /// to dynamically change the background color of a row.
-class PlutoRowColorContext {
-  final PlutoRow row;
-
-  final int rowIdx;
-
-  final PlutoGridStateManager stateManager;
-
-  const PlutoRowColorContext({
-    required this.row,
-    required this.rowIdx,
-    required this.stateManager,
-  });
-}
-
-class PlutoRowBorderContext {
+class PlutoRowContext {
   final PlutoRow row;
 
   final int rowIdx;
@@ -1545,39 +1530,11 @@ class PlutoRowBorderContext {
 
   final bool isLeftFrozen;
 
-  const PlutoRowBorderContext({
-    required this.row,
-    required this.rowIdx,
-    required this.stateManager,
-    required this.isLeftFrozen,
-  });
-}
-
-class PlutoCellTextStyleContext {
-  final PlutoRow row;
-
-  final int rowIdx;
-
-  final PlutoGridStateManager stateManager;
-
-  const PlutoCellTextStyleContext({
-    required this.row,
-    required this.rowIdx,
-    required this.stateManager,
-  });
-}
-
-class PlutoRowContext {
-  final PlutoRow row;
-
-  final int rowIdx;
-
-  final PlutoGridStateManager stateManager;
-
   const PlutoRowContext({
     required this.row,
     required this.rowIdx,
     required this.stateManager,
+    this.isLeftFrozen = false,
   });
 }
 
