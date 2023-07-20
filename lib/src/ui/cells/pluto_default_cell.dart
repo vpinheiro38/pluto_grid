@@ -472,7 +472,7 @@ class _DefaultCellWidget extends StatelessWidget {
     );
 
     TextStyle cellTextStyle = stateManager.cellTextStyleCallback?.call(
-          PlutoCellTextStyleContext(
+          PlutoRowContext(
             rowIdx: rowIdx,
             row: row,
             stateManager: stateManager,

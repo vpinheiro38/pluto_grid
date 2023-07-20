@@ -60,7 +60,7 @@ class PlutoLeftFrozenRowsState
       itemCount: _rows.length,
       itemExtent: stateManager.rowTotalHeight,
       itemBuilder: (ctx, i) {
-        return PlutoBaseRow(
+        return FrozenRow(
           key: ValueKey('left_frozen_row_${_rows[i].key}'),
           rowIdx: i,
           row: _rows[i],
@@ -68,6 +68,111 @@ class PlutoLeftFrozenRowsState
           stateManager: stateManager,
         );
       },
+    );
+  }
+}
+
+class FrozenRow extends StatefulWidget {
+  final int rowIdx;
+
+  final PlutoRow row;
+
+  final List<PlutoColumn> columns;
+
+  final PlutoGridStateManager stateManager;
+
+  final bool visibilityLayout;
+
+  const FrozenRow({
+    required this.rowIdx,
+    required this.row,
+    required this.columns,
+    required this.stateManager,
+    this.visibilityLayout = false,
+    super.key,
+  });
+
+  @override
+  State<FrozenRow> createState() => _FrozenRowState();
+}
+
+class _FrozenRowState extends State<FrozenRow> {
+  final LayerLink _layerLink = LayerLink();
+  OverlayEntry? _leftFloatingEntry;
+
+  _showOverlay() {
+    if (_leftFloatingEntry != null) {
+      _leftFloatingEntry?.remove();
+      _leftFloatingEntry = null;
+    }
+
+    Widget? floatingWidget =
+        widget.stateManager.rowLeftFloatingWidgetCallback?.call(
+      PlutoRowContext(
+        row: widget.row,
+        rowIdx: widget.rowIdx,
+        stateManager: widget.stateManager,
+      ),
+    );
+
+    if (floatingWidget == null) return;
+
+    _leftFloatingEntry = OverlayEntry(
+      builder: (context) => Positioned(
+        left: 0,
+        child: CompositedTransformFollower(
+          link: _layerLink,
+          showWhenUnlinked: false,
+          child: floatingWidget,
+        ),
+      ),
+    );
+
+    if (_leftFloatingEntry != null) {
+      return Overlay.of(context).insert(_leftFloatingEntry!);
+    }
+  }
+
+  @override
+  void initState() {
+    super.initState();
+  }
+
+  @override
+  void dispose() {
+    if (_leftFloatingEntry != null) {
+      _leftFloatingEntry?.remove();
+      _leftFloatingEntry = null;
+    }
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    WidgetsBinding.instance.addPostFrameCallback((_) => _showOverlay());
+
+    return CompositedTransformTarget(
+      link: _layerLink,
+      child: Stack(
+        fit: StackFit.passthrough,
+        children: [
+          PlutoBaseRow(
+            key: widget.key,
+            rowIdx: widget.rowIdx,
+            row: widget.row,
+            columns: widget.columns,
+            stateManager: widget.stateManager,
+          ),
+          widget.stateManager.rowIndicatorCallback?.call(
+                PlutoRowContext(
+                  rowIdx: widget.rowIdx,
+                  row: widget.row,
+                  stateManager: widget.stateManager,
+                ),
+              ) ??
+              Container(),
+        ],
+      ),
     );
   }
 }

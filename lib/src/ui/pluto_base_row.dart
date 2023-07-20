@@ -246,7 +246,7 @@ class _RowContainerWidgetState extends PlutoStateWithChange<_RowContainerWidget>
     }
 
     return stateManager.rowColorCallback!(
-      PlutoRowColorContext(
+      PlutoRowContext(
         rowIdx: widget.rowIdx,
         row: widget.row,
         stateManager: stateManager,
@@ -286,7 +286,7 @@ class _RowContainerWidgetState extends PlutoStateWithChange<_RowContainerWidget>
     }
 
     return stateManager.rowBorderCallback!(
-      PlutoRowBorderContext(
+      PlutoRowContext(
         rowIdx: widget.rowIdx,
         row: widget.row,
         stateManager: stateManager,

@@ -44,13 +44,18 @@ typedef CreateFooterCallBack = Widget Function(
     PlutoGridStateManager stateManager);
 
 typedef PlutoCellTextStyleCallback = TextStyle Function(
-    PlutoCellTextStyleContext rowColorContext);
+    PlutoRowContext rowColorContext);
 
-typedef PlutoRowColorCallback = Color Function(
-    PlutoRowColorContext rowColorContext);
+typedef PlutoRowColorCallback = Color Function(PlutoRowContext rowColorContext);
 
 typedef PlutoRowBorderCallback = Border Function(
-    PlutoRowBorderContext rowBorderContext);
+    PlutoRowContext rowBorderContext);
+
+typedef PlutoRowIndicatorCallback = Widget? Function(
+    PlutoRowContext rowContext);
+
+typedef PlutoRowLeftFloatingWidgetCallback = Widget? Function(
+    PlutoRowContext rowContext);
 
 /// [PlutoGrid] is a widget that receives columns and rows and is expressed as a grid-type UI.
 ///
@@ -81,6 +86,8 @@ class PlutoGrid extends PlutoStatefulWidget {
     this.rowColorCallback,
     this.rowBorderCallback,
     this.cellTextStyleCallback,
+    this.rowIndicatorCallback,
+    this.rowLeftFloatingWidgetCallback,
     this.columnMenuDelegate,
     this.configuration = const PlutoGridConfiguration(),
     this.notifierFilterResolver,
@@ -304,6 +311,10 @@ class PlutoGrid extends PlutoStatefulWidget {
   final PlutoRowBorderCallback? rowBorderCallback;
 
   final PlutoCellTextStyleCallback? cellTextStyleCallback;
+
+  final PlutoRowIndicatorCallback? rowIndicatorCallback;
+
+  final PlutoRowLeftFloatingWidgetCallback? rowLeftFloatingWidgetCallback;
 
   /// {@template pluto_grid_property_columnMenuDelegate}
   /// Column menu can be customized.
@@ -533,6 +544,8 @@ class PlutoGridState extends PlutoStateWithChange<PlutoGrid> {
       rowColorCallback: widget.rowColorCallback,
       rowBorderCallback: widget.rowBorderCallback,
       cellTextStyleCallback: widget.cellTextStyleCallback,
+      rowIndicatorCallback: widget.rowIndicatorCallback,
+      rowLeftFloatingWidgetCallback: widget.rowLeftFloatingWidgetCallback,
       createHeader: widget.createHeader,
       createFooter: widget.createFooter,
       columnMenuDelegate: widget.columnMenuDelegate,
@@ -1508,21 +1521,7 @@ class PlutoGridOnColumnsMovedEvent {
 
 /// Argument of [PlutoGrid.rowColumnCallback] callback
 /// to dynamically change the background color of a row.
-class PlutoRowColorContext {
-  final PlutoRow row;
-
-  final int rowIdx;
-
-  final PlutoGridStateManager stateManager;
-
-  const PlutoRowColorContext({
-    required this.row,
-    required this.rowIdx,
-    required this.stateManager,
-  });
-}
-
-class PlutoRowBorderContext {
+class PlutoRowContext {
   final PlutoRow row;
 
   final int rowIdx;
@@ -1531,25 +1530,11 @@ class PlutoRowBorderContext {
 
   final bool isLeftFrozen;
 
-  const PlutoRowBorderContext({
+  const PlutoRowContext({
     required this.row,
     required this.rowIdx,
     required this.stateManager,
-    required this.isLeftFrozen,
-  });
-}
-
-class PlutoCellTextStyleContext {
-  final PlutoRow row;
-
-  final int rowIdx;
-
-  final PlutoGridStateManager stateManager;
-
-  const PlutoCellTextStyleContext({
-    required this.row,
-    required this.rowIdx,
-    required this.stateManager,
+    this.isLeftFrozen = false,
   });
 }
 
