@@ -54,11 +54,7 @@ mixin TextCellState<T extends TextCell> on State<T> implements TextFieldProps {
 
     cellFocus = FocusNode(onKey: _handleOnKey);
 
-    cellFocus.addListener(() {
-      if (!cellFocus.hasFocus) {
-        _handleOnComplete();
-      }
-    });
+    cellFocus.addListener(_handleFocusChange);
 
     widget.stateManager.setTextEditingController(_textController);
 
@@ -79,6 +75,8 @@ mixin TextCellState<T extends TextCell> on State<T> implements TextFieldProps {
      * Saves the changed value when moving a cell while text is being input.
      * if user do not press enter key, onEditingComplete is not called and the value is not saved.
      */
+    cellFocus.removeListener(_handleFocusChange);
+
     if (_cellEditingStatus.isChanged) {
       _changeValue();
     }
@@ -95,6 +93,13 @@ mixin TextCellState<T extends TextCell> on State<T> implements TextFieldProps {
     cellFocus.dispose();
 
     super.dispose();
+  }
+
+  void _handleFocusChange() {
+    if (!cellFocus.hasFocus) {
+      _handleOnComplete();
+      widget.stateManager.setEditing(false);
+    }
   }
 
   void _restoreText() {

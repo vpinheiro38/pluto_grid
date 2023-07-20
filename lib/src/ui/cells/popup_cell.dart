@@ -70,15 +70,25 @@ mixin PopupCellState<T extends PopupCell> on State<T>
             widget.column.formattedValueForDisplayInEditing(widget.cell.value);
       }
     });
+
+    textFocus.addListener(_handleFocusChange);
   }
 
   @override
   void dispose() {
+    textFocus.removeListener(_handleFocusChange);
+
     textController.dispose();
 
     textFocus.dispose();
 
     super.dispose();
+  }
+
+  void _handleFocusChange() {
+    if (!textFocus.hasFocus && !isOpenedPopup) {
+      widget.stateManager.setEditing(false);
+    }
   }
 
   void openPopup() {
