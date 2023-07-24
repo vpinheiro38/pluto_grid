@@ -107,6 +107,16 @@ class _UserColumnMenu implements PlutoColumnMenuDelegate<_UserColumnMenuItem> {
         break;
     }
   }
+
+  @override
+  Future<_UserColumnMenuItem?>? showColumnMenu({
+    required BuildContext context,
+    required Offset position,
+    required List<Widget> items,
+    Color backgroundColor = Colors.white,
+  }) {
+    return Future.value(_UserColumnMenuItem.moveNext);
+  }
 }
 
 enum _UserColumnMenuItem {

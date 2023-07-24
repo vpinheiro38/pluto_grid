@@ -726,7 +726,7 @@ void main() {
 
 class _TestColumnMenu implements PlutoColumnMenuDelegate {
   @override
-  List<PopupMenuEntry> buildMenuItems({
+  List<PopupMenuEntry<String>> buildMenuItems({
     required PlutoGridStateManager stateManager,
     required PlutoColumn column,
   }) {
@@ -754,4 +754,31 @@ class _TestColumnMenu implements PlutoColumnMenuDelegate {
     required bool mounted,
     required selected,
   }) {}
+
+  @override
+  Future<String?>? showColumnMenu({
+    required BuildContext context,
+    required Offset position,
+    required List<Widget> items,
+    Color backgroundColor = Colors.white,
+  }) {
+    final RenderBox overlay =
+        Overlay.of(context).context.findRenderObject() as RenderBox;
+
+    final List<PopupMenuEntry<String>> finalItems =
+        items.cast<PopupMenuEntry<String>>();
+
+    return showMenu<String>(
+      context: context,
+      color: backgroundColor,
+      position: RelativeRect.fromLTRB(
+        position.dx,
+        position.dy,
+        position.dx + overlay.size.width,
+        position.dy + overlay.size.height,
+      ),
+      items: finalItems,
+      useRootNavigator: true,
+    );
+  }
 }

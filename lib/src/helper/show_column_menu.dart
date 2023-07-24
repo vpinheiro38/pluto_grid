@@ -14,11 +14,45 @@ abstract class PlutoColumnMenuDelegate<T> {
     required bool mounted,
     required T? selected,
   });
+
+  Future<T?>? showColumnMenu({
+    required BuildContext context,
+    required Offset position,
+    required List<PopupMenuEntry> items,
+    Color backgroundColor = Colors.white,
+  });
 }
 
 class PlutoColumnMenuDelegateDefault
     implements PlutoColumnMenuDelegate<PlutoGridColumnMenuItem> {
   const PlutoColumnMenuDelegateDefault();
+
+  @override
+  Future<PlutoGridColumnMenuItem?>? showColumnMenu({
+    required BuildContext context,
+    required Offset position,
+    required List<Widget> items,
+    Color backgroundColor = Colors.white,
+  }) {
+    final RenderBox overlay =
+        Overlay.of(context).context.findRenderObject() as RenderBox;
+
+    final List<PopupMenuEntry<PlutoGridColumnMenuItem>> finalItems =
+        items.cast<PopupMenuEntry<PlutoGridColumnMenuItem>>();
+
+    return showMenu<PlutoGridColumnMenuItem>(
+      context: context,
+      color: backgroundColor,
+      position: RelativeRect.fromLTRB(
+        position.dx,
+        position.dy,
+        position.dx + overlay.size.width,
+        position.dy + overlay.size.height,
+      ),
+      items: finalItems,
+      useRootNavigator: true,
+    );
+  }
 
   @override
   List<PopupMenuEntry<PlutoGridColumnMenuItem>> buildMenuItems({
@@ -72,30 +106,6 @@ class PlutoColumnMenuDelegateDefault
         break;
     }
   }
-}
-
-/// Open the context menu on the right side of the column.
-Future<T?>? showColumnMenu<T>({
-  required BuildContext context,
-  required Offset position,
-  required List<PopupMenuEntry<T>> items,
-  Color backgroundColor = Colors.white,
-}) {
-  final RenderBox overlay =
-      Overlay.of(context).context.findRenderObject() as RenderBox;
-
-  return showMenu<T>(
-    context: context,
-    color: backgroundColor,
-    position: RelativeRect.fromLTRB(
-      position.dx,
-      position.dy,
-      position.dx + overlay.size.width,
-      position.dy + overlay.size.height,
-    ),
-    items: items,
-    useRootNavigator: true,
-  );
 }
 
 List<PopupMenuEntry<PlutoGridColumnMenuItem>> _getDefaultColumnMenuItems({
