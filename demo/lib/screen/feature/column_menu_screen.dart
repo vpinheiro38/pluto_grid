@@ -117,6 +117,9 @@ class _UserColumnMenu implements PlutoColumnMenuDelegate<_UserColumnMenuItem> {
   }) {
     return Future.value(_UserColumnMenuItem.moveNext);
   }
+
+  @override
+  Widget? leadingIcon(PlutoColumn column) => null;
 }
 
 enum _UserColumnMenuItem {

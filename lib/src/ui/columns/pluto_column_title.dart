@@ -123,10 +123,40 @@ class PlutoColumnTitleState extends PlutoStateWithChange<PlutoColumnTitle> {
     _isPointMoving = false;
   }
 
-  @override
-  Widget build(BuildContext context) {
+  Widget _titleIcons() {
     final style = stateManager.configuration.style;
 
+    Widget? leadingIcon;
+
+    try {
+      leadingIcon = stateManager.columnMenuDelegate.leadingIcon(widget.column);
+    } catch (e) {
+      leadingIcon = Container();
+    }
+
+    return Row(
+      children: [
+        leadingIcon ?? Container(),
+        IconButton(
+          icon: PlutoGridColumnIcon(
+            sort: _sort,
+            color: style.iconColor,
+            icon: widget.column.enableContextMenu
+                ? style.columnContextIcon
+                : style.columnResizeIcon,
+            ascendingIcon: style.columnAscendingIcon,
+            descendingIcon: style.columnDescendingIcon,
+          ),
+          iconSize: style.iconSize,
+          mouseCursor: contextMenuCursor,
+          onPressed: null,
+        ),
+      ],
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
     final columnWidget = _SortableWidget(
       stateManager: stateManager,
       column: widget.column,
@@ -141,20 +171,7 @@ class PlutoColumnTitleState extends PlutoStateWithChange<PlutoColumnTitle> {
       height: widget.height,
       child: Align(
         alignment: Alignment.center,
-        child: IconButton(
-          icon: PlutoGridColumnIcon(
-            sort: _sort,
-            color: style.iconColor,
-            icon: widget.column.enableContextMenu
-                ? style.columnContextIcon
-                : style.columnResizeIcon,
-            ascendingIcon: style.columnAscendingIcon,
-            descendingIcon: style.columnDescendingIcon,
-          ),
-          iconSize: style.iconSize,
-          mouseCursor: contextMenuCursor,
-          onPressed: null,
-        ),
+        child: _titleIcons(),
       ),
     );
 
@@ -375,6 +392,15 @@ class _ColumnWidget extends StatelessWidget {
       builder: (dragContext, candidate, rejected) {
         final bool noDragTarget = candidate.isEmpty;
 
+        bool hasLeadingIcon = false;
+
+        try {
+          hasLeadingIcon =
+              stateManager.columnMenuDelegate.leadingIcon(column) != null;
+        } catch (e) {
+          hasLeadingIcon = false;
+        }
+
         final style = stateManager.style;
 
         return SizedBox(
@@ -392,7 +418,8 @@ class _ColumnWidget extends StatelessWidget {
                     : BorderSide.none,
               ),
             ),
-            child: Padding(
+            child: Container(
+              margin: hasLeadingIcon ? const EdgeInsets.only(right: 25) : null,
               padding: padding,
               child: Align(
                 alignment: Alignment.centerLeft,

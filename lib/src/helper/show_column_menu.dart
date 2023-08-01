@@ -21,6 +21,8 @@ abstract class PlutoColumnMenuDelegate<T> {
     required List<PopupMenuEntry> items,
     Color backgroundColor = Colors.white,
   });
+
+  Widget? leadingIcon(PlutoColumn column);
 }
 
 class PlutoColumnMenuDelegateDefault
@@ -106,6 +108,9 @@ class PlutoColumnMenuDelegateDefault
         break;
     }
   }
+
+  @override
+  Widget? leadingIcon(PlutoColumn column) => null;
 }
 
 List<PopupMenuEntry<PlutoGridColumnMenuItem>> _getDefaultColumnMenuItems({
