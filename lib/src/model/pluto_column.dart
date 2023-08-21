@@ -61,7 +61,7 @@ class PlutoColumn {
   ///   ],
   /// ),
   /// ```
-  InlineSpan? titleSpan;
+  InlineSpan Function(PlutoColumnContext context)? titleSpan;
 
   /// Customisable cell padding.
   /// It takes precedence over defaultCellPadding in PlutoGridConfiguration.

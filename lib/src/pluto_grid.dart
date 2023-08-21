@@ -1538,6 +1538,17 @@ class PlutoRowContext {
   });
 }
 
+class PlutoColumnContext {
+  final PlutoColumn column;
+
+  final PlutoGridStateManager stateManager;
+
+  const PlutoColumnContext({
+    required this.column,
+    required this.stateManager,
+  });
+}
+
 /// Extension class for [ScrollConfiguration.behavior] of [PlutoGrid].
 class PlutoScrollBehavior extends MaterialScrollBehavior {
   const PlutoScrollBehavior({
