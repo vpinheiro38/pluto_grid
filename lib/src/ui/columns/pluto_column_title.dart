@@ -565,7 +565,13 @@ class _ColumnTextWidgetState extends PlutoStateWithChange<_ColumnTextWidget> {
       widget.column.titleSpan == null ? widget.column.title : null;
 
   List<InlineSpan> get _children => [
-        if (widget.column.titleSpan != null) widget.column.titleSpan!,
+        if (widget.column.titleSpan != null)
+          widget.column.titleSpan!(
+            PlutoColumnContext(
+              column: widget.column,
+              stateManager: stateManager,
+            ),
+          ),
         if (_isFilteredList)
           WidgetSpan(
             alignment: PlaceholderAlignment.middle,
