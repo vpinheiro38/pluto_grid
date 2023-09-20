@@ -131,26 +131,37 @@ class PlutoColumnTitleState extends PlutoStateWithChange<PlutoColumnTitle> {
     try {
       leadingIcon = stateManager.columnMenuDelegate.leadingIcon(widget.column);
     } catch (e) {
-      leadingIcon = Container();
+      leadingIcon;
     }
+
+    Widget icon = PlutoGridColumnIcon(
+      sort: _sort,
+      color: style.iconColor,
+      icon: widget.column.enableContextMenu
+          ? style.columnContextIcon
+          : style.columnResizeIcon,
+      ascendingIcon: style.columnAscendingIcon,
+      descendingIcon: style.columnDescendingIcon,
+    );
+
+    Widget iconButton = IconButton(
+      icon: icon,
+      iconSize: style.iconSize,
+      mouseCursor: SystemMouseCursors.click,
+      onPressed: null,
+    );
+
+    Widget dragging = MouseRegion(
+      cursor: contextMenuCursor,
+      hitTestBehavior: HitTestBehavior.translucent,
+      child: Container(width: 5),
+    );
 
     return Row(
       children: [
         leadingIcon ?? Container(),
-        IconButton(
-          icon: PlutoGridColumnIcon(
-            sort: _sort,
-            color: style.iconColor,
-            icon: widget.column.enableContextMenu
-                ? style.columnContextIcon
-                : style.columnResizeIcon,
-            ascendingIcon: style.columnAscendingIcon,
-            descendingIcon: style.columnDescendingIcon,
-          ),
-          iconSize: style.iconSize,
-          mouseCursor: contextMenuCursor,
-          onPressed: null,
-        ),
+        iconButton,
+        dragging,
       ],
     );
   }
@@ -197,6 +208,7 @@ class PlutoColumnTitleState extends PlutoStateWithChange<PlutoColumnTitle> {
                     onPointerDown: _handleOnPointDown,
                     onPointerMove: _handleOnPointMove,
                     onPointerUp: _handleOnPointUp,
+                    behavior: HitTestBehavior.translucent,
                     child: contextMenuIcon,
                   )
                 : contextMenuIcon,
