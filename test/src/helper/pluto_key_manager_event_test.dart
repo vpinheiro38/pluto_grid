@@ -8,7 +8,7 @@ void main() {
 
   late PlutoKeyManagerEvent? keyManagerEvent;
 
-  KeyEventResult callback(FocusNode node, RawKeyEvent event) {
+  KeyEventResult callback(FocusNode node, KeyEvent event) {
     keyManagerEvent = PlutoKeyManagerEvent(
       focusNode: node,
       event: event,
@@ -28,12 +28,12 @@ void main() {
 
   Future<void> buildWidget({
     required WidgetTester tester,
-    required KeyEventResult Function(FocusNode, RawKeyEvent) callback,
+    required KeyEventResult Function(FocusNode, KeyEvent) callback,
   }) async {
     await tester.pumpWidget(MaterialApp(
       home: FocusScope(
         autofocus: true,
-        onKey: callback,
+        onKeyEvent: callback,
         child: Focus(
           focusNode: focusNode,
           child: const SizedBox(width: 100, height: 100),
@@ -62,7 +62,7 @@ void main() {
     (tester) async {
       late PlutoKeyManagerEvent keyManagerEvent;
 
-      KeyEventResult callback(FocusNode node, RawKeyEvent event) {
+      KeyEventResult callback(FocusNode node, KeyEvent event) {
         keyManagerEvent = PlutoKeyManagerEvent(
           focusNode: node,
           event: event,
@@ -147,7 +147,7 @@ void main() {
 
       const key = LogicalKeyboardKey.control;
       await tester.sendKeyDownEvent(key);
-      await tester.sendKeyUpEvent(LogicalKeyboardKey.keyC);
+      await tester.sendKeyDownEvent(LogicalKeyboardKey.keyC);
       expect(keyManagerEvent!.isCtrlC, true);
       await tester.sendKeyUpEvent(key);
     },
@@ -160,7 +160,7 @@ void main() {
 
       const key = LogicalKeyboardKey.control;
       await tester.sendKeyDownEvent(key);
-      await tester.sendKeyUpEvent(LogicalKeyboardKey.keyV);
+      await tester.sendKeyDownEvent(LogicalKeyboardKey.keyV);
       expect(keyManagerEvent!.isCtrlV, true);
       await tester.sendKeyUpEvent(key);
     },
@@ -173,7 +173,7 @@ void main() {
 
       const key = LogicalKeyboardKey.control;
       await tester.sendKeyDownEvent(key);
-      await tester.sendKeyUpEvent(LogicalKeyboardKey.keyA);
+      await tester.sendKeyDownEvent(LogicalKeyboardKey.keyA);
       expect(keyManagerEvent!.isCtrlA, true);
       await tester.sendKeyUpEvent(key);
     },

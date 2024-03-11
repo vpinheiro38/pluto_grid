@@ -1742,6 +1742,8 @@ void main() {
 
     var shortcutEvent = '';
 
+    HardwareKeyboard instance = HardwareKeyboard.instance;
+
     await tester.pumpWidget(
       MaterialApp(
         home: Material(
@@ -1752,8 +1754,8 @@ void main() {
               stateManager = event.stateManager;
             },
             customShortcutEvent: (event) {
-              if (event.isControlPressed &&
-                  event.isKeyPressed(LogicalKeyboardKey.keyZ)) {
+              if (instance.isControlPressed &&
+                  instance.isLogicalKeyPressed(LogicalKeyboardKey.keyZ)) {
                 shortcutEvent = 'UNDO';
               }
             },
@@ -1795,6 +1797,8 @@ void main() {
 
       var shortcutEvent = '';
 
+      HardwareKeyboard instance = HardwareKeyboard.instance;
+
       await tester.pumpWidget(
         MaterialApp(
           home: Material(
@@ -1805,8 +1809,8 @@ void main() {
                 stateManager = event.stateManager;
               },
               customShortcutEvent: (event) {
-                if (event.isControlPressed &&
-                    event.isKeyPressed(LogicalKeyboardKey.keyZ)) {
+                if (instance.isControlPressed &&
+                    instance.isLogicalKeyPressed(LogicalKeyboardKey.keyZ)) {
                   shortcutEvent = 'UNDO';
                 }
               },

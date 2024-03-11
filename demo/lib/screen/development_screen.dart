@@ -35,7 +35,7 @@ class _DevelopmentScreenState extends State<DevelopmentScreen> {
 
   late PlutoGridStateManager stateManager;
 
-  Color Function(PlutoRowColorContext)? rowColorCallback;
+  Color Function(PlutoRowContext)? rowColorCallback;
 
   PlutoRowGroupDelegate? rowGroupDelegate;
 
@@ -128,7 +128,7 @@ class _DevelopmentScreenState extends State<DevelopmentScreen> {
       columns.addAll(testColumnsA);
       columnGroups.addAll(testColumnGroupsA);
       rows.addAll(DummyData.rowsByColumns(length: 10000, columns: columns));
-      rowColorCallback = (PlutoRowColorContext rowColorContext) {
+      rowColorCallback = (PlutoRowContext rowColorContext) {
         return rowColorContext.row.cells['column2']?.value == 'green'
             ? const Color(0xFFE2F6DF)
             : Colors.white;
@@ -958,18 +958,20 @@ final testColumnsA = [
     enableDropToResize: true,
     enableAutoEditing: true,
     titleTextAlign: PlutoColumnTextAlign.right,
-    titleSpan: const TextSpan(
-      children: [
-        WidgetSpan(
-          child: Text(
-            '* ',
-            style: TextStyle(color: Colors.red),
+    titleSpan: (text) {
+      return const TextSpan(
+        children: [
+          WidgetSpan(
+            child: Text(
+              '* ',
+              style: TextStyle(color: Colors.red),
+            ),
+            alignment: PlaceholderAlignment.bottom,
           ),
-          alignment: PlaceholderAlignment.bottom,
-        ),
-        TextSpan(text: 'column1'),
-      ],
-    ),
+          TextSpan(text: 'column1'),
+        ],
+      );
+    },
     width: 250,
     minWidth: 175,
     renderer: (rendererContext) {
