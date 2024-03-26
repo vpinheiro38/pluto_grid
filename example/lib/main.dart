@@ -158,7 +158,11 @@ class _PlutoGridExamplePageState extends State<PlutoGridExamplePage> {
           onChanged: (PlutoGridOnChangedEvent event) {
             print(event);
           },
-          configuration: const PlutoGridConfiguration(),
+          configuration: const PlutoGridConfiguration(
+            style: PlutoGridStyleConfig(
+              columnIconViewType: ColumnIconViewType.hover,
+            ),
+          ),
         ),
       ),
     );

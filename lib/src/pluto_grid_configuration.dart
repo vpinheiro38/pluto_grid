@@ -4,6 +4,14 @@ import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:pluto_grid/pluto_grid.dart';
 
+enum ColumnIconViewType {
+  normal,
+  hover;
+
+  bool get isNormal => this == ColumnIconViewType.normal;
+  bool get ishover => this == ColumnIconViewType.hover;
+}
+
 class PlutoGridConfiguration {
   /// When you select a value in the pop-up grid, it moves down.
   final bool enableMoveDownAfterSelecting;
@@ -193,6 +201,7 @@ class PlutoGridConfiguration {
 class PlutoGridStyleConfig {
   const PlutoGridStyleConfig({
     this.columnsBackgroundColor,
+    this.columnsBackgroundHoverColor,
     this.columnRowDividerColor,
     this.enableGridBorderShadow = false,
     this.enableColumnBorderVertical = true,
@@ -200,6 +209,7 @@ class PlutoGridStyleConfig {
     this.enableCellBorderVertical = true,
     this.enableCellBorderHorizontal = true,
     this.enableRowColorAnimation = false,
+    this.columnIconViewType = ColumnIconViewType.normal,
     this.gridBackgroundColor = Colors.white,
     this.rowColor = Colors.white,
     this.oddRowColor,
@@ -251,6 +261,7 @@ class PlutoGridStyleConfig {
 
   const PlutoGridStyleConfig.dark({
     this.columnsBackgroundColor,
+    this.columnsBackgroundHoverColor,
     this.columnRowDividerColor,
     this.enableGridBorderShadow = false,
     this.enableColumnBorderVertical = true,
@@ -258,6 +269,7 @@ class PlutoGridStyleConfig {
     this.enableCellBorderVertical = true,
     this.enableCellBorderHorizontal = true,
     this.enableRowColorAnimation = false,
+    this.columnIconViewType = ColumnIconViewType.normal,
     this.gridBackgroundColor = const Color(0xFF111111),
     this.rowColor = const Color(0xFF111111),
     this.oddRowColor,
@@ -308,6 +320,8 @@ class PlutoGridStyleConfig {
   });
 
   final Color? columnsBackgroundColor;
+
+  final Color? columnsBackgroundHoverColor;
 
   final Color? columnRowDividerColor;
 
@@ -430,6 +444,10 @@ class PlutoGridStyleConfig {
   /// If enableContextMenu of PlutoColumn is false and enableDropToResize is true,
   /// only the width of the column can be adjusted.
   final IconData columnResizeIcon;
+
+  /// If columnIconViewType of PlutoColumn is ColumnIconViewType.normal, always show icons
+  /// If columnIconViewType of PlutoColumn is ColumnIconViewType.hover, only show icons when hover column
+  final ColumnIconViewType columnIconViewType;
 
   /// Ascending icon when sorting a column.
   ///

@@ -739,6 +739,45 @@ void main() {
         expect(icon.color, Colors.pink);
       },
     );
+
+    group('columnIconViewType', () {
+      aColumnWithConfiguration(
+        const PlutoGridConfiguration(
+          style: PlutoGridStyleConfig(
+            columnIconViewType: ColumnIconViewType.normal,
+          ),
+        ),
+        column: PlutoColumn(
+          title: 'column title',
+          field: 'column_field_name',
+          type: PlutoColumnType.text(),
+          sort: PlutoColumnSort.descending,
+        ),
+      ).test(
+        'If columnIconViewType is normal, icons should always appear.',
+        (tester) async {
+          expect(find.byType(IconButton), findsOneWidget);
+        },
+      );
+
+      aColumnWithConfiguration(
+        const PlutoGridConfiguration(
+          style: PlutoGridStyleConfig(
+            columnIconViewType: ColumnIconViewType.hover,
+          ),
+        ),
+        column: PlutoColumn(
+          title: 'column title',
+          field: 'column_field_name',
+          type: PlutoColumnType.text(),
+        ),
+      ).test(
+        'If columnIconViewType is hover, the icons should appear when you hover on the title.',
+        (tester) async {
+          expect(find.byType(IconButton), findsNothing);
+        },
+      );
+    });
   });
 
   group('individual enableColumnBorderVertical', () {
