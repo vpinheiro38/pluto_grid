@@ -699,7 +699,7 @@ void main() {
       'If columnAscendingIcon is set, the set icon should appear.',
       (tester) async {
         final target = find.descendant(
-          of: find.byType(PlutoColumnTitle),
+          of: find.byType(PlutoGridColumnSortIcon),
           matching: find.byType(Icon),
         );
 
@@ -729,7 +729,7 @@ void main() {
       'If columnDescendingIcon is set, the set icon should appear.',
       (tester) async {
         final target = find.descendant(
-          of: find.byType(PlutoColumnTitle),
+          of: find.byType(PlutoGridColumnSortIcon),
           matching: find.byType(Icon),
         );
 

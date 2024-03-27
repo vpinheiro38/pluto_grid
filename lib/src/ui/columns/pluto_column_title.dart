@@ -128,6 +128,9 @@ class PlutoColumnTitleState extends PlutoStateWithChange<PlutoColumnTitle> {
   Widget _titleIcons() {
     final style = stateManager.configuration.style;
 
+    bool isViewNormal =
+        stateManager.configuration.style.columnIconViewType.isNormal;
+
     Widget? leadingIcon;
 
     try {
@@ -136,21 +139,30 @@ class PlutoColumnTitleState extends PlutoStateWithChange<PlutoColumnTitle> {
       leadingIcon;
     }
 
+    Widget sortIcon = Visibility(
+      visible: _isHoveringIcon || isViewNormal || isSortingIcon(),
+      child: PlutoGridColumnSortIcon(
+        sort: _sort,
+        ascendingIcon: style.columnAscendingIcon,
+        descendingIcon: style.columnDescendingIcon,
+      ),
+    );
+
     Widget icon = PlutoGridColumnIcon(
-      sort: _sort,
       color: style.iconColor,
       icon: widget.column.enableContextMenu
           ? style.columnContextIcon
           : style.columnResizeIcon,
-      ascendingIcon: style.columnAscendingIcon,
-      descendingIcon: style.columnDescendingIcon,
     );
 
-    Widget iconButton = IconButton(
-      icon: icon,
-      iconSize: style.iconSize,
-      mouseCursor: SystemMouseCursors.click,
-      onPressed: null,
+    Widget iconButton = Visibility(
+      visible: _isHoveringIcon || isViewNormal || leadingIcon != null,
+      child: IconButton(
+        icon: leadingIcon ?? icon,
+        iconSize: style.iconSize,
+        mouseCursor: SystemMouseCursors.click,
+        onPressed: null,
+      ),
     );
 
     Widget dragging = MouseRegion(
@@ -159,20 +171,12 @@ class PlutoColumnTitleState extends PlutoStateWithChange<PlutoColumnTitle> {
       child: Container(width: 5),
     );
 
-    bool isViewNormal =
-        stateManager.configuration.style.columnIconViewType.isNormal;
-
-    bool alwaysShow = isViewNormal || isSortingIcon();
-
-    return Visibility(
-      visible: _isHoveringIcon || alwaysShow,
-      child: Row(
-        children: [
-          leadingIcon ?? Container(),
-          iconButton,
-          dragging,
-        ],
-      ),
+    return Row(
+      children: [
+        iconButton,
+        sortIcon,
+        dragging,
+      ],
     );
   }
 
@@ -268,20 +272,31 @@ class PlutoColumnTitleState extends PlutoStateWithChange<PlutoColumnTitle> {
 }
 
 class PlutoGridColumnIcon extends StatelessWidget {
-  final PlutoColumnSort? sort;
-
   final Color color;
 
   final IconData icon;
+
+  const PlutoGridColumnIcon({
+    this.color = Colors.black26,
+    this.icon = Icons.dehaze,
+    Key? key,
+  }) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Icon(icon, color: color);
+  }
+}
+
+class PlutoGridColumnSortIcon extends StatelessWidget {
+  final PlutoColumnSort? sort;
 
   final Icon? ascendingIcon;
 
   final Icon? descendingIcon;
 
-  const PlutoGridColumnIcon({
+  const PlutoGridColumnSortIcon({
     this.sort,
-    this.color = Colors.black26,
-    this.icon = Icons.dehaze,
     this.ascendingIcon,
     this.descendingIcon,
     Key? key,
@@ -289,6 +304,13 @@ class PlutoGridColumnIcon extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    return Visibility(
+      visible: sort != PlutoColumnSort.none,
+      child: getIcon(),
+    );
+  }
+
+  Widget getIcon() {
     switch (sort) {
       case PlutoColumnSort.ascending:
         return ascendingIcon == null
@@ -307,11 +329,9 @@ class PlutoGridColumnIcon extends StatelessWidget {
                 color: Colors.red,
               )
             : descendingIcon!;
+
       default:
-        return Icon(
-          icon,
-          color: color,
-        );
+        return Container();
     }
   }
 }
