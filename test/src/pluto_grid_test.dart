@@ -929,6 +929,62 @@ void main() {
     expect(stateManager!.currentCellPosition!.rowIdx, 1);
   });
 
+    testWidgets('editing grid shift + numLock.',
+      (WidgetTester tester) async {
+    // given
+    final columns = [
+      ColumnHelper.textColumn('headerL', frozen: PlutoColumnFrozen.start).first,
+      ...ColumnHelper.textColumn('headerB', count: 3),
+      ColumnHelper.textColumn('headerR', frozen: PlutoColumnFrozen.end).first,
+    ];
+    final rows = RowHelper.count(10, columns);
+
+    PlutoGridStateManager? stateManager;
+
+    // when
+    await tester.pumpWidget(
+      MaterialApp(
+        home: Material(
+          child: PlutoGrid(
+            columns: columns,
+            rows: rows,
+            onLoaded: (PlutoGridOnLoadedEvent event) {
+              stateManager = event.stateManager;
+            },
+          ),
+        ),
+      ),
+    );
+
+    await tester.pumpAndSettle();
+
+    // 1 번 컬럼의 1번 행의 셀 선택
+    Finder currentCell = find.text('headerB1 value 1');
+
+    await tester.tap(currentCell);
+
+    expect(stateManager!.currentCell!.value, 'headerB1 value 1');
+
+    expect(stateManager!.isEditing, false);
+
+    await tester.tap(currentCell);
+
+    expect(stateManager!.currentCell!.value, 'headerB1 value 1');
+
+    expect(stateManager!.isEditing, true);
+
+
+    await tester.sendKeyDownEvent(LogicalKeyboardKey.numLock);
+    await tester.sendKeyDownEvent(LogicalKeyboardKey.shift);
+    await tester.sendKeyEvent(LogicalKeyboardKey.arrowRight);
+    await tester.sendKeyUpEvent(LogicalKeyboardKey.shift);
+
+    expect(stateManager!.currentCell!.value, 'headerB1 value 1');
+    expect(stateManager!.currentSelectingPosition, null);
+    expect(stateManager!.currentCellPosition!.columnIdx, 2);
+    expect(stateManager!.currentCellPosition!.rowIdx, 1);
+  });
+
   testWidgets('editing 상태에서 shift + 좌측 방향키 입력 시 셀이 선택 되지 않아야 한다.',
       (WidgetTester tester) async {
     // given
@@ -1151,11 +1207,11 @@ void main() {
 
     expect(stateManager!.currentCell!.value, 'headerB1 value 1');
     // editing 상태가 아니면 shift + 방향키 입력 시 셀이 선택 되어야 한다.
-    expect(stateManager!.currentSelectingPosition!.columnIdx, 3);
-    expect(stateManager!.currentSelectingPosition!.rowIdx, 1);
+    expect(stateManager?.currentSelectingPosition?.columnIdx, 3);
+    expect(stateManager?.currentSelectingPosition?.rowIdx, 1);
     // 현재 선택 셀은 이동 되지 않아야 한다.
-    expect(stateManager!.currentCellPosition!.columnIdx, 2);
-    expect(stateManager!.currentCellPosition!.rowIdx, 1);
+    expect(stateManager?.currentCellPosition?.columnIdx, 2);
+    expect(stateManager?.currentCellPosition?.rowIdx, 1);
   });
 
   testWidgets('editing 상태가 아니면, shift + 좌측 방향키 입력 시 셀이 선택 되어야 한다.',
@@ -1204,10 +1260,10 @@ void main() {
 
     expect(stateManager!.currentCell!.value, 'headerB1 value 1');
     // editing 상태가 아니면 shift + 방향키 입력 시 셀이 선택 되어야 한다.
-    expect(stateManager!.currentSelectingPosition!.columnIdx, 1);
-    expect(stateManager!.currentSelectingPosition!.rowIdx, 1);
+    expect(stateManager?.currentSelectingPosition?.columnIdx, 1);
+    expect(stateManager?.currentSelectingPosition?.rowIdx, 1);
     // 현재 선택 셀은 이동 되지 않아야 한다.
-    expect(stateManager!.currentCellPosition!.columnIdx, 2);
+    expect(stateManager!.currentCellPosition?.columnIdx, 2);
     expect(stateManager!.currentCellPosition!.rowIdx, 1);
   });
 

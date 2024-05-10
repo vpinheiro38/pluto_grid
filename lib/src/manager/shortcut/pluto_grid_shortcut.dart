@@ -29,14 +29,40 @@ class PlutoGridShortcut {
     required PlutoGridStateManager stateManager,
     required HardwareKeyboard state,
   }) {
+    if (keyEvent.event is! KeyRepeatEvent && keyEvent.event is! KeyDownEvent) {
+      return false;
+    }
+
+    List<LogicalKeyboardKey> pressedKeys = [];
+
+    for (final key in keyEvent.instance.logicalKeysPressed) {
+      if (key.debugName != LogicalKeyboardKey.numLock.debugName) {
+        pressedKeys.add(key);
+      }
+    }
+
     for (final action in actions.entries) {
-      if (action.key.accepts(keyEvent.event, state)) {
+      if (listsAreEqual(action.key.triggers, pressedKeys) ||
+          action.key.accepts(keyEvent.event, state)) {
         action.value.execute(keyEvent: keyEvent, stateManager: stateManager);
         return true;
       }
     }
-
     return false;
+  }
+
+  bool listsAreEqual(Iterable<LogicalKeyboardKey>? triggers,
+      Iterable<LogicalKeyboardKey>? pressedKeys) {
+    if (triggers == null ||
+        pressedKeys == null ||
+        triggers.length != pressedKeys.length) {
+      return false;
+    }
+
+    for (int i = 0; i < triggers.length; i++) {
+      if (triggers.elementAt(i) != pressedKeys.elementAt(i)) return false;
+    }
+    return true;
   }
 
   static final Map<ShortcutActivator, PlutoGridShortcutAction> defaultActions =
@@ -51,13 +77,21 @@ class PlutoGridShortcut {
     LogicalKeySet(LogicalKeyboardKey.arrowDown):
         const PlutoGridActionMoveCellFocus(PlutoMoveDirection.down),
     // Move selected cell focus
-    LogicalKeySet(LogicalKeyboardKey.shift, LogicalKeyboardKey.arrowLeft):
+    LogicalKeySet(LogicalKeyboardKey.shiftLeft, LogicalKeyboardKey.arrowLeft):
         const PlutoGridActionMoveSelectedCellFocus(PlutoMoveDirection.left),
-    LogicalKeySet(LogicalKeyboardKey.shift, LogicalKeyboardKey.arrowRight):
+    LogicalKeySet(LogicalKeyboardKey.shiftLeft, LogicalKeyboardKey.arrowRight):
         const PlutoGridActionMoveSelectedCellFocus(PlutoMoveDirection.right),
-    LogicalKeySet(LogicalKeyboardKey.shift, LogicalKeyboardKey.arrowUp):
+    LogicalKeySet(LogicalKeyboardKey.shiftLeft, LogicalKeyboardKey.arrowUp):
         const PlutoGridActionMoveSelectedCellFocus(PlutoMoveDirection.up),
-    LogicalKeySet(LogicalKeyboardKey.shift, LogicalKeyboardKey.arrowDown):
+    LogicalKeySet(LogicalKeyboardKey.shiftLeft, LogicalKeyboardKey.arrowDown):
+        const PlutoGridActionMoveSelectedCellFocus(PlutoMoveDirection.down),
+    LogicalKeySet(LogicalKeyboardKey.shiftRight, LogicalKeyboardKey.arrowLeft):
+        const PlutoGridActionMoveSelectedCellFocus(PlutoMoveDirection.left),
+    LogicalKeySet(LogicalKeyboardKey.shiftRight, LogicalKeyboardKey.arrowRight):
+        const PlutoGridActionMoveSelectedCellFocus(PlutoMoveDirection.right),
+    LogicalKeySet(LogicalKeyboardKey.shiftRight, LogicalKeyboardKey.arrowUp):
+        const PlutoGridActionMoveSelectedCellFocus(PlutoMoveDirection.up),
+    LogicalKeySet(LogicalKeyboardKey.shiftRight, LogicalKeyboardKey.arrowDown):
         const PlutoGridActionMoveSelectedCellFocus(PlutoMoveDirection.down),
     // Move cell focus by page vertically
     LogicalKeySet(LogicalKeyboardKey.pageUp):
@@ -65,26 +99,39 @@ class PlutoGridShortcut {
     LogicalKeySet(LogicalKeyboardKey.pageDown):
         const PlutoGridActionMoveCellFocusByPage(PlutoMoveDirection.down),
     // Move cell focus by page vertically
-    LogicalKeySet(LogicalKeyboardKey.shift, LogicalKeyboardKey.pageUp):
+    LogicalKeySet(LogicalKeyboardKey.shiftLeft, LogicalKeyboardKey.pageUp):
         const PlutoGridActionMoveSelectedCellFocusByPage(PlutoMoveDirection.up),
-    LogicalKeySet(LogicalKeyboardKey.shift, LogicalKeyboardKey.pageDown):
+    LogicalKeySet(LogicalKeyboardKey.shiftLeft, LogicalKeyboardKey.pageDown):
+        const PlutoGridActionMoveSelectedCellFocusByPage(
+            PlutoMoveDirection.down),
+    LogicalKeySet(LogicalKeyboardKey.shiftRight, LogicalKeyboardKey.pageUp):
+        const PlutoGridActionMoveSelectedCellFocusByPage(PlutoMoveDirection.up),
+    LogicalKeySet(LogicalKeyboardKey.shiftRight, LogicalKeyboardKey.pageDown):
         const PlutoGridActionMoveSelectedCellFocusByPage(
             PlutoMoveDirection.down),
     // Move page when pagination is enabled
-    LogicalKeySet(LogicalKeyboardKey.alt, LogicalKeyboardKey.pageUp):
+    LogicalKeySet(LogicalKeyboardKey.altLeft, LogicalKeyboardKey.pageUp):
         const PlutoGridActionMoveCellFocusByPage(PlutoMoveDirection.left),
-    LogicalKeySet(LogicalKeyboardKey.alt, LogicalKeyboardKey.pageDown):
+    LogicalKeySet(LogicalKeyboardKey.altLeft, LogicalKeyboardKey.pageDown):
+        const PlutoGridActionMoveCellFocusByPage(PlutoMoveDirection.right),
+    LogicalKeySet(LogicalKeyboardKey.altRight, LogicalKeyboardKey.pageUp):
+        const PlutoGridActionMoveCellFocusByPage(PlutoMoveDirection.left),
+    LogicalKeySet(LogicalKeyboardKey.altRight, LogicalKeyboardKey.pageDown):
         const PlutoGridActionMoveCellFocusByPage(PlutoMoveDirection.right),
     // Default tab key action
     LogicalKeySet(LogicalKeyboardKey.tab): const PlutoGridActionDefaultTab(),
-    LogicalKeySet(LogicalKeyboardKey.shift, LogicalKeyboardKey.tab):
+    LogicalKeySet(LogicalKeyboardKey.shiftLeft, LogicalKeyboardKey.tab):
+        const PlutoGridActionDefaultTab(),
+    LogicalKeySet(LogicalKeyboardKey.shiftRight, LogicalKeyboardKey.tab):
         const PlutoGridActionDefaultTab(),
     // Default enter key action
     LogicalKeySet(LogicalKeyboardKey.enter):
         const PlutoGridActionDefaultEnterKey(),
     LogicalKeySet(LogicalKeyboardKey.numpadEnter):
         const PlutoGridActionDefaultEnterKey(),
-    LogicalKeySet(LogicalKeyboardKey.shift, LogicalKeyboardKey.enter):
+    LogicalKeySet(LogicalKeyboardKey.shiftLeft, LogicalKeyboardKey.enter):
+        const PlutoGridActionDefaultEnterKey(),
+    LogicalKeySet(LogicalKeyboardKey.shiftRight, LogicalKeyboardKey.enter):
         const PlutoGridActionDefaultEnterKey(),
     // Default escape key action
     LogicalKeySet(LogicalKeyboardKey.escape):
@@ -94,24 +141,82 @@ class PlutoGridShortcut {
         const PlutoGridActionMoveCellFocusToEdge(PlutoMoveDirection.left),
     LogicalKeySet(LogicalKeyboardKey.end):
         const PlutoGridActionMoveCellFocusToEdge(PlutoMoveDirection.right),
-    LogicalKeySet(LogicalKeyboardKey.control, LogicalKeyboardKey.home):
+    LogicalKeySet(LogicalKeyboardKey.controlLeft, LogicalKeyboardKey.home):
         const PlutoGridActionMoveCellFocusToEdge(PlutoMoveDirection.up),
-    LogicalKeySet(LogicalKeyboardKey.control, LogicalKeyboardKey.end):
+    LogicalKeySet(LogicalKeyboardKey.controlLeft, LogicalKeyboardKey.end):
+        const PlutoGridActionMoveCellFocusToEdge(PlutoMoveDirection.down),
+    LogicalKeySet(LogicalKeyboardKey.controlRight, LogicalKeyboardKey.home):
+        const PlutoGridActionMoveCellFocusToEdge(PlutoMoveDirection.up),
+    LogicalKeySet(LogicalKeyboardKey.controlRight, LogicalKeyboardKey.end):
         const PlutoGridActionMoveCellFocusToEdge(PlutoMoveDirection.down),
     // Move selected cell focus to edge
-    LogicalKeySet(LogicalKeyboardKey.shift, LogicalKeyboardKey.home):
+    LogicalKeySet(LogicalKeyboardKey.shiftLeft, LogicalKeyboardKey.home):
         const PlutoGridActionMoveSelectedCellFocusToEdge(
             PlutoMoveDirection.left),
-    LogicalKeySet(LogicalKeyboardKey.shift, LogicalKeyboardKey.end):
+
+    LogicalKeySet(LogicalKeyboardKey.shiftLeft, LogicalKeyboardKey.end):
         const PlutoGridActionMoveSelectedCellFocusToEdge(
             PlutoMoveDirection.right),
-    LogicalKeySet(LogicalKeyboardKey.control, LogicalKeyboardKey.shift,
+
+    LogicalKeySet(LogicalKeyboardKey.shiftRight, LogicalKeyboardKey.home):
+        const PlutoGridActionMoveSelectedCellFocusToEdge(
+            PlutoMoveDirection.left),
+
+    LogicalKeySet(LogicalKeyboardKey.shiftRight, LogicalKeyboardKey.end):
+        const PlutoGridActionMoveSelectedCellFocusToEdge(
+            PlutoMoveDirection.right),
+
+    LogicalKeySet(LogicalKeyboardKey.controlLeft, LogicalKeyboardKey.shiftLeft,
             LogicalKeyboardKey.home):
         const PlutoGridActionMoveSelectedCellFocusToEdge(PlutoMoveDirection.up),
-    LogicalKeySet(LogicalKeyboardKey.control, LogicalKeyboardKey.shift,
+
+    LogicalKeySet(LogicalKeyboardKey.controlRight,
+            LogicalKeyboardKey.shiftRight, LogicalKeyboardKey.end):
+        const PlutoGridActionMoveSelectedCellFocusToEdge(
+            PlutoMoveDirection.right),
+
+    LogicalKeySet(LogicalKeyboardKey.controlLeft, LogicalKeyboardKey.shiftRight,
+            LogicalKeyboardKey.home):
+        const PlutoGridActionMoveSelectedCellFocusToEdge(PlutoMoveDirection.up),
+
+    LogicalKeySet(LogicalKeyboardKey.controlRight, LogicalKeyboardKey.shiftLeft,
+            LogicalKeyboardKey.end):
+        const PlutoGridActionMoveSelectedCellFocusToEdge(
+            PlutoMoveDirection.right),
+
+    LogicalKeySet(LogicalKeyboardKey.controlLeft, LogicalKeyboardKey.shiftLeft,
+            LogicalKeyboardKey.home):
+        const PlutoGridActionMoveSelectedCellFocusToEdge(PlutoMoveDirection.up),
+    LogicalKeySet(LogicalKeyboardKey.controlRight,
+            LogicalKeyboardKey.shiftRight, LogicalKeyboardKey.home):
+        const PlutoGridActionMoveSelectedCellFocusToEdge(PlutoMoveDirection.up),
+    LogicalKeySet(LogicalKeyboardKey.controlLeft, LogicalKeyboardKey.shiftRight,
+            LogicalKeyboardKey.home):
+        const PlutoGridActionMoveSelectedCellFocusToEdge(PlutoMoveDirection.up),
+    LogicalKeySet(LogicalKeyboardKey.controlRight, LogicalKeyboardKey.shiftLeft,
+            LogicalKeyboardKey.home):
+        const PlutoGridActionMoveSelectedCellFocusToEdge(PlutoMoveDirection.up),
+
+    LogicalKeySet(LogicalKeyboardKey.controlLeft, LogicalKeyboardKey.shiftLeft,
             LogicalKeyboardKey.end):
         const PlutoGridActionMoveSelectedCellFocusToEdge(
             PlutoMoveDirection.down),
+
+    LogicalKeySet(LogicalKeyboardKey.controlRight,
+            LogicalKeyboardKey.shiftRight, LogicalKeyboardKey.end):
+        const PlutoGridActionMoveSelectedCellFocusToEdge(
+            PlutoMoveDirection.down),
+
+    LogicalKeySet(LogicalKeyboardKey.controlLeft, LogicalKeyboardKey.shiftRight,
+            LogicalKeyboardKey.end):
+        const PlutoGridActionMoveSelectedCellFocusToEdge(
+            PlutoMoveDirection.down),
+
+    LogicalKeySet(LogicalKeyboardKey.controlRight, LogicalKeyboardKey.shiftLeft,
+            LogicalKeyboardKey.end):
+        const PlutoGridActionMoveSelectedCellFocusToEdge(
+            PlutoMoveDirection.down),
+
     // Set editing
     LogicalKeySet(LogicalKeyboardKey.f2): const PlutoGridActionSetEditing(),
     // Focus to column filter
@@ -121,13 +226,21 @@ class PlutoGridShortcut {
     LogicalKeySet(LogicalKeyboardKey.f4):
         const PlutoGridActionToggleColumnSort(),
     // Copy the values of cells
-    LogicalKeySet(LogicalKeyboardKey.control, LogicalKeyboardKey.keyC):
+    LogicalKeySet(LogicalKeyboardKey.controlLeft, LogicalKeyboardKey.keyC):
         const PlutoGridActionCopyValues(),
     // Paste values from clipboard
-    LogicalKeySet(LogicalKeyboardKey.control, LogicalKeyboardKey.keyV):
+    LogicalKeySet(LogicalKeyboardKey.controlLeft, LogicalKeyboardKey.keyV):
         const PlutoGridActionPasteValues(),
     // Select all cells or rows
-    LogicalKeySet(LogicalKeyboardKey.control, LogicalKeyboardKey.keyA):
+    LogicalKeySet(LogicalKeyboardKey.controlLeft, LogicalKeyboardKey.keyA):
+        const PlutoGridActionSelectAll(),
+    LogicalKeySet(LogicalKeyboardKey.controlRight, LogicalKeyboardKey.keyC):
+        const PlutoGridActionCopyValues(),
+    // Paste values from clipboard
+    LogicalKeySet(LogicalKeyboardKey.controlRight, LogicalKeyboardKey.keyV):
+        const PlutoGridActionPasteValues(),
+    // Select all cells or rows
+    LogicalKeySet(LogicalKeyboardKey.controlRight, LogicalKeyboardKey.keyA):
         const PlutoGridActionSelectAll(),
   };
 }
