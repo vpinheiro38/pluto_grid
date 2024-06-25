@@ -36,7 +36,7 @@ class PlutoGridShortcut {
     List<LogicalKeyboardKey> pressedKeys = [];
 
     for (final key in keyEvent.instance.logicalKeysPressed) {
-      if (key.debugName != LogicalKeyboardKey.numLock.debugName) {
+      if (key.keyId != LogicalKeyboardKey.numLock.keyId) {
         pressedKeys.add(key);
       }
     }
