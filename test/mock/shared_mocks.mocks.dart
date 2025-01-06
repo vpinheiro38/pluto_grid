@@ -5118,6 +5118,7 @@ class MockFocusNode extends _i1.Mock implements _i3.FocusNode {
   String toStringDeep({
     String? prefixLineOne = r'',
     String? prefixOtherLines,
+    _i3.TextTreeConfiguration? parentConfiguration,
     _i3.DiagnosticLevel? minLevel = _i3.DiagnosticLevel.debug,
   }) =>
       (super.noSuchMethod(
@@ -5127,6 +5128,7 @@ class MockFocusNode extends _i1.Mock implements _i3.FocusNode {
           {
             #prefixLineOne: prefixLineOne,
             #prefixOtherLines: prefixOtherLines,
+            #parentConfiguration: parentConfiguration,
             #minLevel: minLevel,
           },
         ),
