@@ -93,7 +93,7 @@ class PlutoGrid extends PlutoStatefulWidget {
     this.notifierFilterResolver,
     this.mode = PlutoGridMode.normal,
     this.customShortcutEvent,
-  }) : super(key: key);
+  });
 
   /// {@template pluto_grid_property_columns}
   /// The [PlutoColumn] column is delivered as a list and can be added or deleted after grid creation.
