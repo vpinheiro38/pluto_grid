@@ -11,7 +11,8 @@ const double defaultChildWidth = 200;
 class _TestWidgetWrapper extends StatefulWidget {
   const _TestWidgetWrapper({
     required this.child,
-  });
+    Key? key,
+  }) : super(key: key);
 
   final Widget child;
 

@@ -41,7 +41,8 @@ abstract class AbstractTextExport<T> {
     // Order is important, so we iterate over columns
     for (PlutoColumn column in visibleColumns(state)) {
       dynamic value = plutoRow.cells[column.field]?.value;
-      serializedRow.add(column.formattedValueForDisplay(value));
+      serializedRow
+          .add(value != null ? column.formattedValueForDisplay(value) : null);
     }
 
     return serializedRow;

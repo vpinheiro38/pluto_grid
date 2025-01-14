@@ -221,8 +221,8 @@ class PlutoGridStateChangeNotifier extends PlutoChangeNotifier
 ///   stateManager.refRows.addAll(FilteredList(initialList: value));
 ///   stateManager.notifyListeners();
 /// });
-/// ```
 /// {@endtemplate}
+/// ```
 class PlutoGridStateManager extends PlutoGridStateChangeNotifier {
   PlutoGridStateManager({
     required super.columns,
